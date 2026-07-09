@@ -30,7 +30,7 @@
     border: 4px solid var(--lcd-ink);
     border-radius: 4px;
     overflow: hidden;
-    box-shadow: inset 0 0 12px rgba(15, 56, 15, 0.4);
+    box-shadow: inset 0 0 12px rgba(6, 48, 73, 0.4);
     touch-action: none; /* permite swipe sem rolar a página */
   }
 
@@ -39,16 +39,45 @@
     width: 100%;
     height: 100%;
     image-rendering: pixelated;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Scanlines horizontais (efeito CRT) */
+  .lcd::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.08) 0,
+      rgba(0, 0, 0, 0.08) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+
+  /* Vinheta suave nos cantos */
+  .lcd::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 58%, rgba(0, 0, 0, 0.16) 100%);
   }
 
   .hud {
     position: absolute;
-    top: 4px;
-    left: 6px;
-    right: 6px;
+    top: 5px;
+    left: 7px;
+    right: 7px;
+    z-index: 3;
     display: flex;
     justify-content: space-between;
-    font-size: 0.5rem;
+    font-size: 0.4rem;
     color: var(--lcd-ink);
     letter-spacing: 0.05em;
     pointer-events: none;

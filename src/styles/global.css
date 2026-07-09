@@ -3,6 +3,14 @@
    Tokens centralizados: mudar a paleta aqui reflete no site inteiro.
    ========================================================================= */
 
+@font-face {
+  font-family: 'Press Start 2P';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/press-start-2p.woff2') format('woff2');
+}
+
 :root {
   /* Tela LCD — tema "Azul gelo" */
   --lcd-bg: #bfe9ff;        /* azul gelo do fundo da tela */

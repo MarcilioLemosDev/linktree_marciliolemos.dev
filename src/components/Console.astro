@@ -7,7 +7,11 @@ import Dpad from './Dpad.astro';
 ---
 
 <main class="console no-select">
-  <div class="brand">marciliolemos<span>.dev</span></div>
+  <div class="topbar">
+    <span class="led" aria-hidden="true"></span>
+    <span class="brand">marciliolemos<span class="dot">.dev</span></span>
+    <span class="power" aria-hidden="true">POWER</span>
+  </div>
 
   <Screen />
 
@@ -31,13 +35,45 @@ import Dpad from './Dpad.astro';
     gap: 1rem;
   }
 
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0 0.2rem;
+  }
+
   .brand {
-    text-align: center;
-    font-size: 0.55rem;
+    font-size: 0.5rem;
     color: var(--shell-shadow);
     letter-spacing: 0.05em;
   }
-  .brand span { color: var(--accent); }
+  .brand .dot { color: var(--accent); }
+
+  .led {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ff8fb4, var(--accent));
+    box-shadow: 0 0 6px var(--accent), inset 0 0 2px rgba(255, 255, 255, 0.6);
+    animation: led-pulse 2.4s ease-in-out infinite;
+  }
+
+  .power {
+    font-size: 0.32rem;
+    color: var(--shell-shadow);
+    letter-spacing: 0.12em;
+    opacity: 0.7;
+  }
+
+  @keyframes led-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .led { animation: none; }
+  }
 
   .controls {
     display: grid;

@@ -76,11 +76,16 @@ export function createSnake(options: SnakeOptions): SnakeGame {
   let queued: Direction[] = [];
   let food: Cell = { x: 0, y: 0 };
   let score = 0;
-  let stepMs = 194;
+  let stepMs = 204;
   let running = false;
   let over = false;
   let raf = 0;
   let last = 0;
+
+  // Pisca-pisca do texto quando parado / game over.
+  let blinkOn = true;
+  let blinkRaf = 0;
+  let blinkLast = 0;
 
   function spawnFood(): void {
     let p: Cell;
@@ -100,7 +105,7 @@ export function createSnake(options: SnakeOptions): SnakeGame {
     dir = 'right';
     queued = [];
     score = 0;
-    stepMs = 194;
+    stepMs = 204;
     running = false;
     over = false;
     COLORS = readColors(canvas);
@@ -108,6 +113,7 @@ export function createSnake(options: SnakeOptions): SnakeGame {
     spawnFood();
     onScore?.(0);
     draw();
+    startBlink();
   }
 
   function setDirection(next: Direction): void {
@@ -138,7 +144,7 @@ export function createSnake(options: SnakeOptions): SnakeGame {
       score += 1;
       onScore?.(score);
       onEat?.(score);
-      if (stepMs > 100) stepMs -= 3;
+      if (stepMs > 105) stepMs -= 3;
       spawnFood();
     } else {
       snake.pop();
@@ -162,23 +168,53 @@ export function createSnake(options: SnakeOptions): SnakeGame {
     ctx.fillStyle = COLORS.ink;
     for (const s of snake) drawCell(s);
 
-    if (over) drawOverlay('GAME\nOVER');
-    else if (!running) drawOverlay('SETAS\nP/ JOGAR');
+    if (over) {
+      dim();
+      drawText(['GAME', 'OVER'], cell * 1.0, canvas.height * 0.36);
+      if (blinkOn) drawText(['PRESS START'], cell * 0.6, canvas.height * 0.72);
+    } else if (!running) {
+      dim();
+      if (blinkOn) drawText(['PRESS', 'START'], cell * 1.0, canvas.height / 2);
+    }
   }
 
-  function drawOverlay(text: string): void {
-    ctx.fillStyle = 'rgba(15, 56, 15, 0.72)';
+  function dim(): void {
+    ctx.fillStyle = 'rgba(6, 48, 73, 0.72)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function drawText(lines: string[], size: number, cy: number): void {
     ctx.fillStyle = COLORS.bg;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = `${Math.floor(cell * 1.1)}px monospace`;
-    const lines = text.split('\n');
-    const lineH = cell * 1.4;
-    const startY = canvas.height / 2 - ((lines.length - 1) * lineH) / 2;
+    ctx.font = `${Math.floor(size)}px 'Press Start 2P', monospace`;
+    const lineH = size * 1.5;
+    const startY = cy - ((lines.length - 1) * lineH) / 2;
     lines.forEach((line, i) => {
       ctx.fillText(line, canvas.width / 2, startY + i * lineH);
     });
+  }
+
+  function blinkLoop(ts: number): void {
+    if (running) return;
+    if (!blinkLast) blinkLast = ts;
+    if (ts - blinkLast >= 500) {
+      blinkLast = ts;
+      blinkOn = !blinkOn;
+      draw();
+    }
+    blinkRaf = requestAnimationFrame(blinkLoop);
+  }
+
+  function startBlink(): void {
+    cancelAnimationFrame(blinkRaf);
+    blinkOn = true;
+    blinkLast = 0;
+    blinkRaf = requestAnimationFrame(blinkLoop);
+  }
+
+  function stopBlink(): void {
+    cancelAnimationFrame(blinkRaf);
   }
 
   function frame(ts: number): void {
@@ -195,6 +231,7 @@ export function createSnake(options: SnakeOptions): SnakeGame {
   function start(): void {
     if (running) return;
     if (over) reset();
+    stopBlink();
     running = true;
     last = 0;
     raf = requestAnimationFrame(frame);
@@ -204,6 +241,7 @@ export function createSnake(options: SnakeOptions): SnakeGame {
     running = false;
     cancelAnimationFrame(raf);
     draw();
+    startBlink();
   }
 
   function gameOver(): void {
@@ -212,11 +250,13 @@ export function createSnake(options: SnakeOptions): SnakeGame {
     cancelAnimationFrame(raf);
     onGameOver?.(score);
     draw();
+    startBlink();
   }
 
   function destroy(): void {
     running = false;
     cancelAnimationFrame(raf);
+    stopBlink();
   }
 
   return {

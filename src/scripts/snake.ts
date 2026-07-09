@@ -76,7 +76,7 @@ export function createSnake(options: SnakeOptions): SnakeGame {
   let queued: Direction[] = [];
   let food: Cell = { x: 0, y: 0 };
   let score = 0;
-  let stepMs = 204;
+  let stepMs = 217;
   let running = false;
   let over = false;
   let raf = 0;
@@ -105,7 +105,7 @@ export function createSnake(options: SnakeOptions): SnakeGame {
     dir = 'right';
     queued = [];
     score = 0;
-    stepMs = 204;
+    stepMs = 217;
     running = false;
     over = false;
     COLORS = readColors(canvas);
@@ -144,7 +144,7 @@ export function createSnake(options: SnakeOptions): SnakeGame {
       score += 1;
       onScore?.(score);
       onEat?.(score);
-      if (stepMs > 105) stepMs -= 3;
+      if (stepMs > 112) stepMs -= 3;
       spawnFood();
     } else {
       snake.pop();

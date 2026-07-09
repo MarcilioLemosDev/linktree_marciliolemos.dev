@@ -3,11 +3,11 @@
 ---
 
 <div class="screen no-select">
-  <div class="lcd">
+  <div class="lcd" id="lcd">
     <canvas id="game" width="160" height="160" aria-label="Jogo da cobrinha"></canvas>
     <div class="hud">
-      <span class="hi">HI 0000</span>
-      <span class="score">0000</span>
+      <span class="hi" id="hi">HI 0000</span>
+      <span class="score" id="score">0000</span>
     </div>
   </div>
 </div>
@@ -31,6 +31,7 @@
     border-radius: 4px;
     overflow: hidden;
     box-shadow: inset 0 0 12px rgba(15, 56, 15, 0.4);
+    touch-action: none; /* permite swipe sem rolar a página */
   }
 
   canvas {
@@ -50,5 +51,6 @@
     font-size: 0.5rem;
     color: var(--lcd-ink);
     letter-spacing: 0.05em;
+    pointer-events: none;
   }
 </style>

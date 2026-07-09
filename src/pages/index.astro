@@ -7,3 +7,55 @@ import '../styles/global.css';
 <Layout>
   <Console />
 </Layout>
+
+<script>
+  import { createSnake, type Direction } from '../scripts/snake';
+  import { initController } from '../scripts/controller';
+
+  const canvas = document.getElementById('game') as HTMLCanvasElement | null;
+  const lcd = document.getElementById('lcd');
+  const scoreEl = document.getElementById('score');
+  const hiEl = document.getElementById('hi');
+
+  if (canvas) {
+    const HI_KEY = 'ml.snake.hi';
+    let hi = Number(localStorage.getItem(HI_KEY) || 0);
+
+    const pad = (n: number) => String(n).padStart(4, '0');
+    const renderHi = () => {
+      if (hiEl) hiEl.textContent = `HI ${pad(hi)}`;
+    };
+    renderHi();
+
+    const game = createSnake({
+      canvas,
+      onScore: (s) => {
+        if (scoreEl) scoreEl.textContent = pad(s);
+      },
+      onGameOver: (s) => {
+        if (s > hi) {
+          hi = s;
+          localStorage.setItem(HI_KEY, String(hi));
+          renderHi();
+        }
+      },
+    });
+    game.reset();
+
+    const DIRS: Direction[] = ['up', 'down', 'left', 'right'];
+
+    initController({
+      swipeTarget: lcd,
+      onButton: (btn) => {
+        if (DIRS.includes(btn as Direction)) {
+          if (game.isOver) game.reset();
+          game.start();
+          game.setDirection(btn as Direction);
+        } else if (btn === 'a') {
+          if (game.isOver) game.reset();
+          game.start();
+        }
+      },
+    });
+  }
+</script>

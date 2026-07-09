@@ -1,0 +1,54 @@
+---
+// A "telinha" LCD onde o Snake roda. Canvas quadrado + moldura escura.
+---
+
+<div class="screen no-select">
+  <div class="lcd">
+    <canvas id="game" width="160" height="160" aria-label="Jogo da cobrinha"></canvas>
+    <div class="hud">
+      <span class="hi">HI 0000</span>
+      <span class="score">0000</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .screen {
+    background: var(--shell-dark);
+    padding: 0.9rem;
+    border-radius: 10px;
+    box-shadow:
+      inset 0 2px 4px rgba(255, 255, 255, 0.3),
+      inset 0 -3px 6px rgba(0, 0, 0, 0.35);
+  }
+
+  .lcd {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    background: var(--lcd-bg);
+    border: 4px solid var(--lcd-ink);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0 0 12px rgba(15, 56, 15, 0.4);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+  }
+
+  .hud {
+    position: absolute;
+    top: 4px;
+    left: 6px;
+    right: 6px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.5rem;
+    color: var(--lcd-ink);
+    letter-spacing: 0.05em;
+  }
+</style>

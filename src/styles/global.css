@@ -1,0 +1,55 @@
+/* =========================================================================
+   Tema retrô — handheld "tijolão" / Nokia antigo, tela LCD monocromática.
+   Tokens centralizados: mudar a paleta aqui reflete no site inteiro.
+   ========================================================================= */
+
+:root {
+  /* Tela LCD (verde-fosforado clássico, tipo Game Boy / Nokia) */
+  --lcd-bg: #9bbc0f;        /* verde claro do fundo da tela */
+  --lcd-dim: #8bac0f;       /* pixel "meio aceso" */
+  --lcd-dark: #306230;      /* pixel escuro */
+  --lcd-ink: #0f380f;       /* tinta mais escura (texto/cobrinha) */
+
+  /* Corpo do aparelho (plástico) */
+  --shell: #c9c5b8;         /* cinza-creme do plástico */
+  --shell-dark: #a8a494;
+  --shell-shadow: #6f6c60;
+  --btn: #4a4a52;           /* botões escuros (D-pad) */
+  --btn-face: #5c5c66;
+  --accent: #8a2b2b;        /* vermelho fosco dos botões A/B */
+
+  --font-pixel: 'Press Start 2P', 'Courier New', monospace;
+
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: env(safe-area-inset-top) 1rem env(safe-area-inset-bottom);
+  background: radial-gradient(circle at 50% 0%, #2a2a33 0%, #16161c 100%);
+  font-family: var(--font-pixel);
+  color: var(--lcd-ink);
+  -webkit-font-smoothing: none;
+  image-rendering: pixelated;
+  overflow: hidden;
+}
+
+/* Evita seleção acidental de texto ao "jogar" no toque */
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}

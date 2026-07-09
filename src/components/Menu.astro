@@ -1,0 +1,69 @@
+---
+import { links } from '../data/links';
+---
+
+<nav class="menu no-select" aria-label="Menu de links">
+  <ul>
+    {
+      links.map((link, i) => (
+        <li>
+          {link.locked || !link.url ? (
+            <span class="item locked" data-id={link.id} aria-disabled="true">
+              <span class="label">{link.label} 🔒</span>
+              {link.sublabel && <span class="sub">{link.sublabel}</span>}
+            </span>
+          ) : (
+            <a
+              class="item"
+              href={link.url}
+              target="_blank"
+              rel="noopener"
+              data-id={link.id}
+              data-index={i}
+            >
+              <span class="label">{link.label}</span>
+              {link.sublabel && <span class="sub">{link.sublabel}</span>}
+            </a>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  .menu ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.5rem 0.6rem;
+    background: var(--lcd-bg);
+    border: 2px solid var(--lcd-ink);
+    border-radius: 4px;
+    color: var(--lcd-ink);
+    text-decoration: none;
+    line-height: 1.3;
+  }
+
+  .item .label { font-size: 0.55rem; }
+  .item .sub { font-size: 0.45rem; color: var(--lcd-dark); }
+
+  .item.locked {
+    opacity: 0.55;
+    background: var(--shell-dark);
+    cursor: not-allowed;
+  }
+
+  /* Item destacado pela navegação do D-pad (fase-jogo aplica .active) */
+  .item.active {
+    background: var(--lcd-ink);
+    color: var(--lcd-bg);
+  }
+</style>

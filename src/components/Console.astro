@@ -1,0 +1,48 @@
+---
+// O aparelho inteiro: telinha em cima; metade de baixo dividida em
+// menu (esquerda) + D-pad (direita), como um handheld antigo.
+import Screen from './Screen.astro';
+import Menu from './Menu.astro';
+import Dpad from './Dpad.astro';
+---
+
+<main class="console no-select">
+  <div class="brand">marciliolemos<span>.dev</span></div>
+
+  <Screen />
+
+  <div class="controls">
+    <Menu />
+    <Dpad />
+  </div>
+</main>
+
+<style>
+  .console {
+    width: min(92vw, 22rem);
+    background: linear-gradient(160deg, var(--shell), var(--shell-dark));
+    border-radius: 18px 18px 40px 18px;
+    padding: 1.1rem;
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.5),
+      inset 0 2px 2px rgba(255, 255, 255, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .brand {
+    text-align: center;
+    font-size: 0.55rem;
+    color: var(--shell-shadow);
+    letter-spacing: 0.05em;
+  }
+  .brand span { color: var(--accent); }
+
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.9rem;
+    align-items: center;
+  }
+</style>

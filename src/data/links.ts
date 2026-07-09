@@ -44,7 +44,7 @@ export const links: MenuLink[] = [
   {
     id: '7aery-build',
     label: '7aery Build',
-    sublabel: 'seu negócio com até 90% menos custo',
+    sublabel: 'desenvolvimento web, mobile e desktop sob medida',
     url: null,
     locked: true,
   },

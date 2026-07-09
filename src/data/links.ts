@@ -28,6 +28,20 @@ export const links: MenuLink[] = [
     locked: false,
   },
   {
+    id: 'whatsapp',
+    label: 'WhatsApp',
+    sublabel: '(19) 99830-3476',
+    url: 'https://wa.me/5519998303476',
+    locked: false,
+  },
+  {
+    id: 'linkedin',
+    label: 'LinkedIn',
+    sublabel: 'meu perfil profissional',
+    url: 'https://br.linkedin.com/in/marc%C3%ADlio-lemos-630a6b336',
+    locked: false,
+  },
+  {
     id: '7aery-build',
     label: '7aery Build',
     sublabel: 'seu negócio com até 90% menos custo',

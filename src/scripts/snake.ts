@@ -1,50 +1,17 @@
 /**
- * Snake clássico (estilo Nokia) renderizado em <canvas>.
- *
- * - Grade fixa; a cobrinha anda uma célula por "tick".
- * - Bater na parede ou no próprio corpo = game over (como no Nokia 3310).
- * - A comida some/reaparece; cada uma acelera levemente o jogo.
+ * Snake clássico (estilo Nokia) — implementa a interface Game.
+ * Só cuida do gameplay e do desenho do tabuleiro; as telas de PRESS START /
+ * escolha / GAME OVER são responsabilidade do console (arcade.ts).
  */
 
-export type Direction = 'up' | 'down' | 'left' | 'right';
+import type { Button, Game, GameContext } from './types';
+import { readColors } from './colors';
 
-export interface SnakeOptions {
-  canvas: HTMLCanvasElement;
-  /** Quantidade de células por lado do tabuleiro. */
-  grid?: number;
-  /** Chamado quando o score muda (para atualizar o HUD). */
-  onScore?: (score: number) => void;
-  /** Chamado ao comer comida (para som/efeitos). */
-  onEat?: (score: number) => void;
-  /** Chamado ao perder. */
-  onGameOver?: (score: number) => void;
-}
-
-export interface SnakeGame {
-  start(): void;
-  pause(): void;
-  reset(): void;
-  setDirection(dir: Direction): void;
-  readonly isRunning: boolean;
-  readonly isOver: boolean;
-  destroy(): void;
-}
+type Direction = 'up' | 'down' | 'left' | 'right';
 
 interface Cell {
   x: number;
   y: number;
-}
-
-// Paleta LCD lida dos tokens CSS (--lcd-*), com fallback para o verde clássico.
-// Assim, trocar a paleta em global.css muda a tela e a cobrinha juntas.
-function readColors(el: HTMLElement) {
-  const s = getComputedStyle(el);
-  const get = (name: string, fallback: string) => s.getPropertyValue(name).trim() || fallback;
-  return {
-    bg: get('--lcd-bg', '#9bbc0f'),
-    food: get('--lcd-dark', '#306230'),
-    ink: get('--lcd-ink', '#0f380f'),
-  };
 }
 
 const OPPOSITE: Record<Direction, Direction> = {
@@ -65,10 +32,12 @@ function randInt(max: number): number {
   return Math.floor(Math.random() * max);
 }
 
-export function createSnake(options: SnakeOptions): SnakeGame {
-  const { canvas, grid = 16, onScore, onEat, onGameOver } = options;
-  const ctx = canvas.getContext('2d')!;
-  const cell = canvas.width / grid;
+const DIRS: Button[] = ['up', 'down', 'left', 'right'];
+
+export function createSnake(ctx: GameContext): Game {
+  const { canvas, cell, onScore, onGameOver } = ctx;
+  const c = canvas.getContext('2d')!;
+  const grid = Math.round(canvas.width / cell);
 
   let COLORS = readColors(canvas);
   let snake: Cell[] = [];
@@ -82,11 +51,6 @@ export function createSnake(options: SnakeOptions): SnakeGame {
   let raf = 0;
   let last = 0;
 
-  // Pisca-pisca do texto quando parado / game over.
-  let blinkOn = true;
-  let blinkRaf = 0;
-  let blinkLast = 0;
-
   function spawnFood(): void {
     let p: Cell;
     do {
@@ -95,7 +59,7 @@ export function createSnake(options: SnakeOptions): SnakeGame {
     food = p;
   }
 
-  function reset(): void {
+  function resetState(): void {
     const mid = Math.floor(grid / 2);
     snake = [
       { x: mid + 1, y: mid },
@@ -106,18 +70,13 @@ export function createSnake(options: SnakeOptions): SnakeGame {
     queued = [];
     score = 0;
     stepMs = 221;
-    running = false;
     over = false;
     COLORS = readColors(canvas);
-    cancelAnimationFrame(raf);
     spawnFood();
-    onScore?.(0);
-    draw();
-    startBlink();
+    onScore(0);
   }
 
   function setDirection(next: Direction): void {
-    // Referência = última direção enfileirada, ou a atual.
     const ref = queued.length ? queued[queued.length - 1] : dir;
     if (next === ref || next === OPPOSITE[ref]) return;
     queued.push(next);
@@ -131,19 +90,16 @@ export function createSnake(options: SnakeOptions): SnakeGame {
     const nx = head.x + d.x;
     const ny = head.y + d.y;
 
-    // Parede.
     if (nx < 0 || ny < 0 || nx >= grid || ny >= grid) return gameOver();
 
     const ate = nx === food.x && ny === food.y;
-    // Se não vai crescer, a cauda sai da frente (colidir com ela é permitido).
     const body = ate ? snake : snake.slice(0, -1);
     if (body.some((s) => s.x === nx && s.y === ny)) return gameOver();
 
     snake.unshift({ x: nx, y: ny });
     if (ate) {
       score += 1;
-      onScore?.(score);
-      onEat?.(score);
+      onScore(score);
       if (stepMs > 114) stepMs -= 3;
       spawnFood();
     } else {
@@ -153,68 +109,18 @@ export function createSnake(options: SnakeOptions): SnakeGame {
     draw();
   }
 
-  function drawCell(c: Cell): void {
+  function drawCell(cellPos: Cell): void {
     const pad = Math.max(1, cell * 0.08);
-    ctx.fillRect(c.x * cell + pad, c.y * cell + pad, cell - pad * 2, cell - pad * 2);
+    c.fillRect(cellPos.x * cell + pad, cellPos.y * cell + pad, cell - pad * 2, cell - pad * 2);
   }
 
   function draw(): void {
-    ctx.fillStyle = COLORS.bg;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = COLORS.food;
+    c.fillStyle = COLORS.bg;
+    c.fillRect(0, 0, canvas.width, canvas.height);
+    c.fillStyle = COLORS.food;
     drawCell(food);
-
-    ctx.fillStyle = COLORS.ink;
+    c.fillStyle = COLORS.ink;
     for (const s of snake) drawCell(s);
-
-    if (over) {
-      dim();
-      drawText(['GAME', 'OVER'], cell * 1.0, canvas.height * 0.36);
-      if (blinkOn) drawText(['PRESS START'], cell * 0.6, canvas.height * 0.72);
-    } else if (!running) {
-      dim();
-      if (blinkOn) drawText(['PRESS', 'START'], cell * 1.0, canvas.height / 2);
-    }
-  }
-
-  function dim(): void {
-    ctx.fillStyle = 'rgba(6, 48, 73, 0.72)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
-
-  function drawText(lines: string[], size: number, cy: number): void {
-    ctx.fillStyle = COLORS.bg;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.font = `${Math.floor(size)}px 'Press Start 2P', monospace`;
-    const lineH = size * 1.5;
-    const startY = cy - ((lines.length - 1) * lineH) / 2;
-    lines.forEach((line, i) => {
-      ctx.fillText(line, canvas.width / 2, startY + i * lineH);
-    });
-  }
-
-  function blinkLoop(ts: number): void {
-    if (running) return;
-    if (!blinkLast) blinkLast = ts;
-    if (ts - blinkLast >= 500) {
-      blinkLast = ts;
-      blinkOn = !blinkOn;
-      draw();
-    }
-    blinkRaf = requestAnimationFrame(blinkLoop);
-  }
-
-  function startBlink(): void {
-    cancelAnimationFrame(blinkRaf);
-    blinkOn = true;
-    blinkLast = 0;
-    blinkRaf = requestAnimationFrame(blinkLoop);
-  }
-
-  function stopBlink(): void {
-    cancelAnimationFrame(blinkRaf);
   }
 
   function frame(ts: number): void {
@@ -228,48 +134,28 @@ export function createSnake(options: SnakeOptions): SnakeGame {
     raf = requestAnimationFrame(frame);
   }
 
-  function start(): void {
-    if (running) return;
-    if (over) reset();
-    stopBlink();
-    running = true;
-    last = 0;
-    raf = requestAnimationFrame(frame);
-  }
-
-  function pause(): void {
-    running = false;
-    cancelAnimationFrame(raf);
-    draw();
-    startBlink();
-  }
-
   function gameOver(): void {
     over = true;
     running = false;
     cancelAnimationFrame(raf);
-    onGameOver?.(score);
     draw();
-    startBlink();
-  }
-
-  function destroy(): void {
-    running = false;
-    cancelAnimationFrame(raf);
-    stopBlink();
+    onGameOver(score);
   }
 
   return {
-    start,
-    pause,
-    reset,
-    setDirection,
-    get isRunning() {
-      return running;
+    start() {
+      resetState();
+      draw();
+      running = true;
+      last = 0;
+      raf = requestAnimationFrame(frame);
     },
-    get isOver() {
-      return over;
+    destroy() {
+      running = false;
+      cancelAnimationFrame(raf);
     },
-    destroy,
+    press(button: Button) {
+      if (DIRS.includes(button)) setDirection(button as Direction);
+    },
   };
 }

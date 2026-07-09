@@ -9,8 +9,8 @@ import '../styles/global.css';
 </Layout>
 
 <script>
-  import { createSnake, type Direction } from '../scripts/snake';
-  import { initController } from '../scripts/controller';
+  import { createArcade } from '../scripts/arcade';
+  import { initController, type Controller } from '../scripts/controller';
 
   const canvas = document.getElementById('game') as HTMLCanvasElement | null;
   const lcd = document.getElementById('lcd');
@@ -18,44 +18,18 @@ import '../styles/global.css';
   const hiEl = document.getElementById('hi');
 
   if (canvas) {
-    const HI_KEY = 'ml.snake.hi';
-    let hi = Number(localStorage.getItem(HI_KEY) || 0);
+    let controller: Controller | null = null;
 
-    const pad = (n: number) => String(n).padStart(4, '0');
-    const renderHi = () => {
-      if (hiEl) hiEl.textContent = `HI ${pad(hi)}`;
-    };
-    renderHi();
-
-    const game = createSnake({
+    const arcade = createArcade({
       canvas,
-      onScore: (s) => {
-        if (scoreEl) scoreEl.textContent = pad(s);
-      },
-      onGameOver: (s) => {
-        if (s > hi) {
-          hi = s;
-          localStorage.setItem(HI_KEY, String(hi));
-          renderHi();
-        }
-      },
+      scoreEl,
+      hiEl,
+      getHeld: () => controller?.held ?? new Set(),
     });
-    game.reset();
 
-    const DIRS: Direction[] = ['up', 'down', 'left', 'right'];
-
-    initController({
+    controller = initController({
       swipeTarget: lcd,
-      onButton: (btn) => {
-        if (DIRS.includes(btn as Direction)) {
-          if (game.isOver) game.reset();
-          game.start();
-          game.setDirection(btn as Direction);
-        } else if (btn === 'a') {
-          if (game.isOver) game.reset();
-          game.start();
-        }
-      },
+      onPress: (button) => arcade.press(button),
     });
   }
 </script>

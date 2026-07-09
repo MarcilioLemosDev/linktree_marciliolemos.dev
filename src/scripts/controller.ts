@@ -1,27 +1,23 @@
 /**
- * Controlador central: liga o D-pad (toque + teclado + swipe) ao jogo/menu.
+ * Controlador: teclado + D-pad de toque + swipe.
  *
- * Dois modos, como nos celulares antigos:
- *   - 'game': setas controlam a cobrinha; A (Enter/Espaço) reinicia/começa.
- *   - 'menu': ↑↓ navegam as opções; A abre; B/MENU volta. (usado no MVP 2)
- *
- * O controlador só despacha eventos de botão; quem decide o que fazer é o
- * consumidor, via `onButton(button, mode)`.
+ * - `onPress(button)`: dispara a cada toque (discreto) — usado para virar a
+ *   cobrinha, navegar menus e selecionar.
+ * - `held`: conjunto de botões mantidos pressionados — usado para movimento
+ *   contínuo (a nave do Space Impact). Só teclado e D-pad alimentam o `held`
+ *   (têm evento de "soltar" confiável); swipe/toque contam só como discreto.
  */
 
-export type ControllerMode = 'game' | 'menu';
-export type Button = 'up' | 'down' | 'left' | 'right' | 'a' | 'b' | 'menu';
+import type { Button } from './types';
 
 export interface ControllerOptions {
-  onButton: (button: Button, mode: ControllerMode) => void;
-  initialMode?: ControllerMode;
-  /** Elemento onde o swipe é detectado (a telinha). */
+  onPress: (button: Button) => void;
+  /** Elemento onde o swipe/toque é detectado (a telinha). */
   swipeTarget?: HTMLElement | null;
 }
 
 export interface Controller {
-  readonly mode: ControllerMode;
-  setMode(mode: ControllerMode): void;
+  readonly held: Set<Button>;
   destroy(): void;
 }
 
@@ -34,76 +30,87 @@ const KEY_MAP: Record<string, Button> = {
   s: 'down',
   a: 'left',
   d: 'right',
+  W: 'up',
+  S: 'down',
+  A: 'left',
+  D: 'right',
   Enter: 'a',
   ' ': 'a',
   Escape: 'b',
-  m: 'menu',
 };
 
 const SWIPE_THRESHOLD = 20;
 
-export function initController(options: ControllerOptions): Controller {
-  let mode: ControllerMode = options.initialMode ?? 'game';
-  const { onButton, swipeTarget } = options;
+export function initController(opts: ControllerOptions): Controller {
+  const held = new Set<Button>();
+  const { onPress, swipeTarget } = opts;
+  const bound: Array<[EventTarget, string, EventListener]> = [];
+  const bind = (el: EventTarget, type: string, h: EventListener) => {
+    el.addEventListener(type, h);
+    bound.push([el, type, h]);
+  };
 
-  function onKey(e: KeyboardEvent): void {
-    const btn = KEY_MAP[e.key];
-    if (!btn) return;
-    e.preventDefault();
-    onButton(btn, mode);
-  }
-  window.addEventListener('keydown', onKey);
+  // Teclado
+  const onKeyDown = (e: Event) => {
+    const ke = e as KeyboardEvent;
+    const b = KEY_MAP[ke.key];
+    if (!b) return;
+    ke.preventDefault();
+    if (ke.repeat) return; // ignora auto-repeat
+    held.add(b);
+    onPress(b);
+  };
+  const onKeyUp = (e: Event) => {
+    const b = KEY_MAP[(e as KeyboardEvent).key];
+    if (b) held.delete(b);
+  };
+  bind(window, 'keydown', onKeyDown);
+  bind(window, 'keyup', onKeyUp);
 
-  // D-pad / botões de toque (qualquer elemento com data-btn).
-  const bound: Array<[HTMLElement, (e: Event) => void]> = [];
+  // D-pad de toque (qualquer elemento com data-btn)
   document.querySelectorAll<HTMLElement>('[data-btn]').forEach((el) => {
-    const btn = el.dataset.btn as Button;
-    const handler = (e: Event) => {
+    const b = el.dataset.btn as Button;
+    bind(el, 'pointerdown', (e) => {
       e.preventDefault();
-      onButton(btn, mode);
-    };
-    el.addEventListener('pointerdown', handler);
-    bound.push([el, handler]);
+      held.add(b);
+      onPress(b);
+    });
+    const release = () => held.delete(b);
+    bind(el, 'pointerup', release);
+    bind(el, 'pointercancel', release);
+    bind(el, 'pointerleave', release);
   });
 
-  // Swipe na telinha (mobile).
+  // Swipe / toque na telinha (só discreto)
   let sx = 0;
   let sy = 0;
-  function onTouchStart(e: TouchEvent): void {
-    const t = e.changedTouches[0];
-    sx = t.clientX;
-    sy = t.clientY;
-  }
-  function onTouchEnd(e: TouchEvent): void {
-    const t = e.changedTouches[0];
-    const dx = t.clientX - sx;
-    const dy = t.clientY - sy;
-    if (Math.abs(dx) < SWIPE_THRESHOLD && Math.abs(dy) < SWIPE_THRESHOLD) {
-      onButton('a', mode); // toque simples = A
-      return;
-    }
-    if (Math.abs(dx) > Math.abs(dy)) onButton(dx > 0 ? 'right' : 'left', mode);
-    else onButton(dy > 0 ? 'down' : 'up', mode);
-  }
   if (swipeTarget) {
-    swipeTarget.addEventListener('touchstart', onTouchStart, { passive: true });
-    swipeTarget.addEventListener('touchend', onTouchEnd, { passive: true });
+    bind(swipeTarget, 'touchstart', (e) => {
+      const t = (e as TouchEvent).changedTouches[0];
+      sx = t.clientX;
+      sy = t.clientY;
+    });
+    bind(swipeTarget, 'touchend', (e) => {
+      const t = (e as TouchEvent).changedTouches[0];
+      const dx = t.clientX - sx;
+      const dy = t.clientY - sy;
+      if (Math.abs(dx) < SWIPE_THRESHOLD && Math.abs(dy) < SWIPE_THRESHOLD) {
+        onPress('a');
+        return;
+      }
+      if (Math.abs(dx) > Math.abs(dy)) onPress(dx > 0 ? 'right' : 'left');
+      else onPress(dy > 0 ? 'down' : 'up');
+    });
   }
 
+  // Evita botão "preso" ao trocar de aba/janela.
+  const clearHeld = () => held.clear();
+  bind(window, 'blur', clearHeld);
+
   return {
-    get mode() {
-      return mode;
-    },
-    setMode(m: ControllerMode) {
-      mode = m;
-    },
+    held,
     destroy() {
-      window.removeEventListener('keydown', onKey);
-      bound.forEach(([el, h]) => el.removeEventListener('pointerdown', h));
-      if (swipeTarget) {
-        swipeTarget.removeEventListener('touchstart', onTouchStart);
-        swipeTarget.removeEventListener('touchend', onTouchEnd);
-      }
+      bound.forEach(([el, type, h]) => el.removeEventListener(type, h));
     },
   };
 }

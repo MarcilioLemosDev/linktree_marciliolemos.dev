@@ -4,19 +4,19 @@
    ========================================================================= */
 
 :root {
-  /* Tela LCD (verde-fosforado clássico, tipo Game Boy / Nokia) */
-  --lcd-bg: #9bbc0f;        /* verde claro do fundo da tela */
-  --lcd-dim: #8bac0f;       /* pixel "meio aceso" */
-  --lcd-dark: #306230;      /* pixel escuro */
-  --lcd-ink: #0f380f;       /* tinta mais escura (texto/cobrinha) */
+  /* Tela LCD — tema "Azul gelo" */
+  --lcd-bg: #bfe9ff;        /* azul gelo do fundo da tela */
+  --lcd-dim: #a3d7f2;       /* pixel "meio aceso" */
+  --lcd-dark: #2f7fae;      /* pixel médio (comida) */
+  --lcd-ink: #063049;       /* tinta escura (texto/cobrinha) */
 
-  /* Corpo do aparelho (plástico) */
-  --shell: #c9c5b8;         /* cinza-creme do plástico */
-  --shell-dark: #a8a494;
-  --shell-shadow: #6f6c60;
-  --btn: #4a4a52;           /* botões escuros (D-pad) */
-  --btn-face: #5c5c66;
-  --accent: #8a2b2b;        /* vermelho fosco dos botões A/B */
+  /* Corpo do aparelho (plástico claro) */
+  --shell: #eef1f4;         /* branco-gelo do plástico */
+  --shell-dark: #d3d9e0;
+  --shell-shadow: #7a8694;
+  --btn: #2b3a67;           /* botões azul-marinho (D-pad) */
+  --btn-face: #3a4d82;
+  --accent: #ff4f8b;        /* rosa vibrante de destaque */
 
   --font-pixel: 'Press Start 2P', 'Courier New', monospace;
 

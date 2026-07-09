@@ -51,7 +51,7 @@ export const links: MenuLink[] = [
   {
     id: '7aery-marketplace',
     label: '7aery Marketplace',
-    sublabel: 'em breve',
+    sublabel: 'marketplace de serviços · em breve',
     url: null,
     locked: true,
   },

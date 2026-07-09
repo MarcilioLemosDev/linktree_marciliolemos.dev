@@ -45,8 +45,9 @@ export const links: MenuLink[] = [
     id: '7aery-build',
     label: '7aery Build',
     sublabel: 'desenvolvimento web, mobile e desktop sob medida',
-    url: null,
-    locked: true,
+    // Provisório: leva ao WhatsApp com mensagem pronta sobre o serviço.
+    url: 'https://wa.me/5519998303476?text=Ol%C3%A1!%20Quero%20saber%20sobre%20o%207aery%20Build%20(desenvolvimento%20web%2C%20mobile%20e%20desktop%20sob%20medida).',
+    locked: false,
   },
   {
     id: '7aery-marketplace',

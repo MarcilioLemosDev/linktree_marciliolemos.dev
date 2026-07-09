@@ -7,6 +7,7 @@ import type { Button, Game, GameContext, GameFactory } from './types';
 import { readColors } from './colors';
 import { createSnake } from './snake';
 import { createSpace } from './space';
+import { createCityBloxx } from './citybloxx';
 
 type State = 'start' | 'choose' | 'playing' | 'over';
 
@@ -26,6 +27,7 @@ interface GameEntry {
 const GAMES: GameEntry[] = [
   { name: 'SNAKE', factory: createSnake, hiKey: 'ml.snake.hi' },
   { name: 'SPACE IMPACT', factory: createSpace, hiKey: 'ml.space.hi' },
+  { name: 'CITY BLOXX', factory: createCityBloxx, hiKey: 'ml.city.hi' },
 ];
 
 export interface Arcade {

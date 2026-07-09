@@ -35,12 +35,17 @@ interface Cell {
   y: number;
 }
 
-// Paleta LCD (espelha os tokens de global.css).
-const COLORS = {
-  bg: '#9bbc0f',
-  food: '#306230',
-  ink: '#0f380f',
-};
+// Paleta LCD lida dos tokens CSS (--lcd-*), com fallback para o verde clássico.
+// Assim, trocar a paleta em global.css muda a tela e a cobrinha juntas.
+function readColors(el: HTMLElement) {
+  const s = getComputedStyle(el);
+  const get = (name: string, fallback: string) => s.getPropertyValue(name).trim() || fallback;
+  return {
+    bg: get('--lcd-bg', '#9bbc0f'),
+    food: get('--lcd-dark', '#306230'),
+    ink: get('--lcd-ink', '#0f380f'),
+  };
+}
 
 const OPPOSITE: Record<Direction, Direction> = {
   up: 'down',
@@ -65,6 +70,7 @@ export function createSnake(options: SnakeOptions): SnakeGame {
   const ctx = canvas.getContext('2d')!;
   const cell = canvas.width / grid;
 
+  let COLORS = readColors(canvas);
   let snake: Cell[] = [];
   let dir: Direction = 'right';
   let queued: Direction[] = [];
@@ -97,6 +103,7 @@ export function createSnake(options: SnakeOptions): SnakeGame {
     stepMs = 140;
     running = false;
     over = false;
+    COLORS = readColors(canvas);
     cancelAnimationFrame(raf);
     spawnFood();
     onScore?.(0);

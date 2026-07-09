@@ -35,13 +35,6 @@ export const links: MenuLink[] = [
     locked: false,
   },
   {
-    id: 'linkedin',
-    label: 'LinkedIn',
-    sublabel: 'meu perfil profissional',
-    url: 'https://br.linkedin.com/in/marc%C3%ADlio-lemos-630a6b336',
-    locked: false,
-  },
-  {
     id: '7aery-build',
     label: '7aery Build',
     sublabel: 'desenvolvimento web, mobile e desktop sob medida',
@@ -55,5 +48,21 @@ export const links: MenuLink[] = [
     sublabel: 'marketplace de serviços · em breve',
     url: null,
     locked: true,
+  },
+];
+
+/** Redes sociais exibidas como ícones no rodapé. */
+export interface Social {
+  /** Identificador usado para escolher o ícone. */
+  id: 'linkedin';
+  label: string;
+  url: string;
+}
+
+export const socials: Social[] = [
+  {
+    id: 'linkedin',
+    label: 'LinkedIn',
+    url: 'https://br.linkedin.com/in/marc%C3%ADlio-lemos-630a6b336',
   },
 ];

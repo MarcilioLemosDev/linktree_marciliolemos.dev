@@ -23,19 +23,21 @@ const ICONS: Record<string, string> = {
 <style>
   .footer {
     display: flex;
-    justify-content: center;
-    gap: 1rem;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: -0.3rem;
+    padding: 0 0.2rem;
   }
 
   .social {
     display: grid;
     place-items: center;
-    width: 2.2rem;
-    height: 2.2rem;
-    border-radius: 8px;
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 7px;
     color: var(--shell);
     background: var(--btn);
-    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
     transition: transform 0.08s, box-shadow 0.08s, background 0.15s;
   }
 
@@ -49,7 +51,7 @@ const ICONS: Record<string, string> = {
   }
 
   .social svg {
-    width: 1.2rem;
-    height: 1.2rem;
+    width: 0.95rem;
+    height: 0.95rem;
   }
 </style>

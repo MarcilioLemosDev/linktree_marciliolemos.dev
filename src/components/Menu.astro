@@ -29,9 +29,19 @@ import { links } from '../data/links';
       ))
     }
   </ul>
+
+  <!-- Mãozinha guia: cicla pelos botões ativos dando um "toque", mostrando
+       onde clicar. Some ao primeiro uso e respeita prefers-reduced-motion. -->
+  <span class="menu-mao" aria-hidden="true">
+    <span class="menu-toque"></span>
+    <svg class="menu-cur" viewBox="0 0 24 24"><path d="M9 12.5V6a1.6 1.6 0 0 1 3.2 0v4.6m0-1.5a1.6 1.6 0 0 1 3.2 0v1.9m0-1.3a1.6 1.6 0 0 1 3.2 0v3.6a5.6 5.6 0 0 1-5.6 5.6h-1.6a4.6 4.6 0 0 1-3.5-1.6l-3-3.6a1.5 1.5 0 0 1 2.2-2L9 14z"/></svg>
+  </span>
 </nav>
 
 <style>
+  .menu {
+    position: relative;
+  }
   .menu ul {
     list-style: none;
     display: flex;
@@ -66,4 +76,102 @@ import { links } from '../data/links';
     background: var(--lcd-ink);
     color: var(--lcd-bg);
   }
+
+  /* Mãozinha guia */
+  .menu-mao {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    z-index: 6;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(0, 0);
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  }
+  .menu-mao.mostrar { opacity: 1; }
+  .menu-cur {
+    width: 100%;
+    height: 100%;
+    fill: var(--accent);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
+  }
+  .menu-toque {
+    position: absolute;
+    left: 0.62rem;
+    top: 0.42rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: -0.75rem 0 0 -0.75rem;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    transform: scale(0);
+    opacity: 0;
+  }
+  .menu-mao.tocando .menu-cur { animation: maoPressao 0.9s ease; }
+  .menu-mao.tocando .menu-toque { animation: maoRipple 0.9s ease; }
+  @keyframes maoPressao {
+    0%, 100% { transform: translate(0, 0); }
+    35% { transform: translate(-1px, 3px); }
+  }
+  @keyframes maoRipple {
+    0% { transform: scale(0); opacity: 0; }
+    30% { transform: scale(0.5); opacity: 0.85; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .menu-mao { display: none; }
+  }
 </style>
+
+<script>
+  // Mãozinha guia: percorre os botões ativos (links reais), posicionando-se
+  // na borda direita de cada um e dando um "toque" (anel), em looping. Some na
+  // primeira interação e respeita "prefers-reduced-motion".
+  const menu = document.querySelector<HTMLElement>('.menu');
+  const mao = menu?.querySelector<HTMLElement>('.menu-mao') ?? null;
+  const alvos = menu ? Array.from(menu.querySelectorAll<HTMLElement>('a.item')) : [];
+  const reduz = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (menu && mao && alvos.length && !reduz) {
+    let i = 0;
+    let parado = false;
+    let timer = 0;
+
+    const posiciona = (el: HTMLElement) => {
+      const mr = menu.getBoundingClientRect();
+      const r = el.getBoundingClientRect();
+      const x = r.right - mr.left - 26;
+      const y = r.top - mr.top + r.height / 2 - 8;
+      mao.style.transform = `translate(${x}px, ${y}px)`;
+    };
+
+    const ciclo = () => {
+      if (parado) return;
+      const el = alvos[i % alvos.length];
+      posiciona(el);
+      mao.classList.add('mostrar');
+      mao.classList.remove('tocando');
+      void mao.offsetWidth;
+      window.setTimeout(() => {
+        if (!parado) mao.classList.add('tocando');
+      }, 480);
+      i += 1;
+      timer = window.setTimeout(ciclo, 2000);
+    };
+
+    posiciona(alvos[0]);
+    timer = window.setTimeout(ciclo, 800);
+
+    const parar = () => {
+      parado = true;
+      window.clearTimeout(timer);
+      mao.classList.remove('mostrar', 'tocando');
+    };
+    menu.addEventListener('pointerdown', parar, { once: true });
+    window.addEventListener('resize', () => {
+      if (!parado) posiciona(alvos[(i - 1 + alvos.length) % alvos.length]);
+    });
+  }
+</script>

@@ -1,59 +1,53 @@
 # marciliolemos.dev
 
-Bio interativa no estilo de um **handheld retrô** (aquele "tijolão" / Nokia
-antigo): a telinha roda o clássico jogo da **cobrinha (Snake)** e o D-pad
-também navega por um menu de links dos meus projetos.
+Bio interativa em **layout de celular (iPhone)**: um linktree direto ao ponto,
+com a tela do aparelho rodando o "app" — marca + menu de links + rodapé.
+Feito para a bio do Instagram profissional (mobile-first).
 
-Serve como linktree criativo para a bio do Instagram profissional.
+## 🎨 Conceito
 
-## 🎮 Conceito
-
-- Corpo de handheld ocupando a tela (mobile-first — o tráfego vem da bio do Insta).
-- **Telinha LCD** monocromática (verde-fosforado) no topo, com o Snake jogável.
-- Metade de baixo dividida: **menu de links** à esquerda, **D-pad** à direita.
-- O mesmo D-pad tem dois modos: joga a cobrinha **e** navega o menu.
-- Bips retrô (Web Audio) com toggle liga/desliga.
+- Moldura de iPhone (titânio, Dynamic Island, status bar, home indicator).
+- Fundo premium escuro com leve halo da cor da marca.
+- Menu em cartões estilo iOS (vidro), com chevron nos ativos e 🔒 nos "em breve".
+- Mãozinha guia que indica onde tocar (some ao primeiro uso).
+- Rodapé: crédito (abre o Instagram) + ícone do LinkedIn.
 
 ## 🛠️ Stack
 
-- [Astro](https://astro.build) — site estático de página única, zero JS desnecessário.
-- HTML/CSS + TypeScript vanilla — Snake em `<canvas>`, sem bibliotecas de jogo.
-- `localStorage` para o high score.
+- [Astro](https://astro.build) — site estático de página única.
+- HTML/CSS + TypeScript vanilla, fonte Inter (`@fontsource-variable/inter`).
+- [@vercel/analytics](https://vercel.com/docs/analytics) — Web Analytics.
 
 ## 📁 Estrutura
 
 ```
 src/
-├── layouts/Layout.astro     # HTML base, SEO, Open Graph
+├── layouts/Layout.astro     # HTML base, SEO, Open Graph, Analytics
 ├── pages/index.astro        # página única
 ├── components/
-│   ├── Console.astro        # o aparelho inteiro
-│   ├── Screen.astro         # telinha LCD (canvas do Snake)
-│   ├── Dpad.astro           # setas ↑↓←→
-│   └── Menu.astro           # opções de link (com 🔒 "em breve")
-├── scripts/
-│   ├── snake.ts             # game loop da cobrinha
-│   ├── controller.ts        # D-pad ↔ jogo/menu (teclado + toque)
-│   └── sound.ts             # bips retrô
-├── data/links.ts            # ⚙️ configuração central dos links
-└── styles/global.css        # tema/tokens do visual retrô
+│   ├── Console.astro        # o aparelho (iPhone) + tela/app
+│   ├── Menu.astro           # cartões de link (com 🔒 e mãozinha guia)
+│   └── Footer.astro         # crédito + redes sociais
+├── data/links.ts            # ⚙️ links, redes e crédito (edite aqui)
+└── styles/global.css        # tema/tokens
 ```
 
 ## ⚙️ Como editar os links
 
-Tudo em **`src/data/links.ts`**. Para publicar um link que está "em breve":
-mude `locked: true` para `false` e preencha `url`.
+Tudo em **`src/data/links.ts`**. Para publicar um link "em breve": mude
+`locked: true` para `false` e preencha `url`.
 
 ## 💻 Desenvolvimento
 
 ```bash
-npm install        # instala dependências
-npm run dev        # servidor local em http://localhost:4321
-npm run build      # gera o site estático em dist/
-npm run preview    # pré-visualiza o build
+npm install
+npm run dev        # http://localhost:4321
+npm run build      # gera dist/
+npm run preview
 ```
 
 ## 🚀 Deploy
 
-Site estático — publica em Cloudflare Pages, Vercel ou Netlify apontando o
-domínio `marciliolemos.dev`. Build: `npm run build`, saída: `dist/`.
+Site estático na Vercel (deploy automático a cada push na `main`), domínio
+`marciliolemos.dev`. O Web Analytics precisa ser habilitado uma vez no painel
+da Vercel (aba **Analytics → Enable**).

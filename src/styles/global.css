@@ -1,34 +1,12 @@
 /* =========================================================================
-   Tema retrô — handheld "tijolão" / Nokia antigo, tela LCD monocromática.
-   Tokens centralizados: mudar a paleta aqui reflete no site inteiro.
+   Tema — linktree em layout de celular (iPhone). Fundo premium escuro com um
+   leve halo da cor da marca. Tokens centralizados em :root.
    ========================================================================= */
 
-@font-face {
-  font-family: 'Press Start 2P';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/press-start-2p.woff2') format('woff2');
-}
-
 :root {
-  /* Tela LCD — tema "Azul gelo" */
-  --lcd-bg: #bfe9ff;        /* azul gelo do fundo da tela */
-  --lcd-dim: #a3d7f2;       /* pixel "meio aceso" */
-  --lcd-dark: #2f7fae;      /* pixel médio (comida) */
-  --lcd-ink: #063049;       /* tinta escura (texto/cobrinha) */
-
-  /* Corpo do aparelho (plástico claro) */
-  --shell: #eef1f4;         /* branco-gelo do plástico */
-  --shell-dark: #d3d9e0;
-  --shell-shadow: #7a8694;
-  --btn: #2b3a67;           /* botões azul-marinho (D-pad) */
-  --btn-face: #3a4d82;
-  --accent: #ff4f8b;        /* rosa vibrante de destaque */
-
-  --font-pixel: 'Press Start 2P', 'Courier New', monospace;
-
-  color-scheme: light;
+  --shell: #3a5bd0; /* azul do halo/brilho do aparelho */
+  --accent: #ff4f8b; /* rosa de destaque (chevron, hover, .dev) */
+  color-scheme: dark;
 }
 
 * {
@@ -46,16 +24,15 @@ body {
   min-height: 100dvh;
   display: grid;
   place-items: center;
-  padding: env(safe-area-inset-top) 1rem env(safe-area-inset-bottom);
-  background: radial-gradient(circle at 50% 0%, #2a2a33 0%, #16161c 100%);
-  font-family: var(--font-pixel);
-  color: var(--lcd-ink);
-  -webkit-font-smoothing: none;
-  image-rendering: pixelated;
-  overflow: hidden;
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  /* Fundo premium de "product shot": escuro com leve brilho da cor da marca. */
+  background: radial-gradient(circle at 50% 28%, color-mix(in srgb, var(--shell) 24%, #05070c), #05070c 68%);
+  font-family: 'Inter Variable', system-ui, sans-serif;
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
-/* Evita seleção acidental de texto ao "jogar" no toque */
 .no-select {
   user-select: none;
   -webkit-user-select: none;

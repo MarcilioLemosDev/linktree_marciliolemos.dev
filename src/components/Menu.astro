@@ -1,16 +1,27 @@
 ---
-import { links } from '../data/links';
+import { links as linksPadrao, type MenuLink } from '../data/links';
+
+interface Props {
+  links?: MenuLink[];
+}
+const { links = linksPadrao } = Astro.props;
 ---
 
-<nav class="menu no-select" aria-label="Menu de links">
+<nav class="menu" aria-label="Menu de links">
   <ul>
     {
       links.map((link, i) => (
         <li>
           {link.locked || !link.url ? (
             <span class="item locked" data-id={link.id} aria-disabled="true">
-              <span class="label">{link.label} 🔒</span>
-              {link.sublabel && <span class="sub">{link.sublabel}</span>}
+              <span class="item-txt">
+                <span class="label">{link.label}</span>
+                {link.sublabel && <span class="sub">{link.sublabel}</span>}
+              </span>
+              <svg class="marca-fim cadeado" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="5" y="11" width="14" height="9" rx="2" />
+                <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+              </svg>
             </span>
           ) : (
             <a
@@ -21,8 +32,13 @@ import { links } from '../data/links';
               data-id={link.id}
               data-index={i}
             >
-              <span class="label">{link.label}</span>
-              {link.sublabel && <span class="sub">{link.sublabel}</span>}
+              <span class="item-txt">
+                <span class="label">{link.label}</span>
+                {link.sublabel && <span class="sub">{link.sublabel}</span>}
+              </span>
+              <svg class="marca-fim chevron" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9 6l6 6-6 6" />
+              </svg>
             </a>
           )}
         </li>
@@ -30,8 +46,7 @@ import { links } from '../data/links';
     }
   </ul>
 
-  <!-- Mãozinha guia: cicla pelos botões ativos dando um "toque", mostrando
-       onde clicar. Some ao primeiro uso e respeita prefers-reduced-motion. -->
+  <!-- Mãozinha guia: cicla pelos botões ativos dando um "toque". Some ao 1º uso. -->
   <span class="menu-mao" aria-hidden="true">
     <span class="menu-toque"></span>
     <svg class="menu-cur" viewBox="0 0 24 24"><path d="M9 12.5V6a1.6 1.6 0 0 1 3.2 0v4.6m0-1.5a1.6 1.6 0 0 1 3.2 0v1.9m0-1.3a1.6 1.6 0 0 1 3.2 0v3.6a5.6 5.6 0 0 1-5.6 5.6h-1.6a4.6 4.6 0 0 1-3.5-1.6l-3-3.6a1.5 1.5 0 0 1 2.2-2L9 14z"/></svg>
@@ -46,35 +61,71 @@ import { links } from '../data/links';
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0;
   }
 
+  /* Linha moderna (estilo iOS): card de vidro sobre o fundo escuro do app. */
   .item {
     display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-    padding: 0.5rem 0.6rem;
-    background: var(--lcd-bg);
-    border: 2px solid var(--lcd-ink);
-    border-radius: 4px;
-    color: var(--lcd-ink);
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    color: #fff;
     text-decoration: none;
-    line-height: 1.3;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.12s ease;
+  }
+  .item-txt { display: flex; flex-direction: column; gap: 0.12rem; min-width: 0; }
+  .label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .sub {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.5);
   }
 
-  .item .label { font-size: 0.55rem; }
-  .item .sub { font-size: 0.45rem; color: var(--lcd-dark); }
+  .marca-fim { width: 1.15rem; height: 1.15rem; flex: none; }
+  .chevron {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.18s ease;
+  }
+  .cadeado {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.45);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  @media (hover: hover) {
+    .item:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+    }
+    .item:hover .chevron { transform: translateX(3px); }
+  }
+  .item:active { transform: scale(0.985); }
+  .item:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 
   .item.locked {
-    opacity: 0.5;
-    filter: saturate(0.55);
+    opacity: 0.55;
     cursor: not-allowed;
-  }
-
-  /* Item destacado pela navegação do D-pad (fase-jogo aplica .active) */
-  .item.active {
-    background: var(--lcd-ink);
-    color: var(--lcd-bg);
   }
 
   /* Mãozinha guia */
@@ -82,8 +133,8 @@ import { links } from '../data/links';
     position: absolute;
     left: 0;
     top: 0;
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.6rem;
+    height: 1.6rem;
     z-index: 6;
     pointer-events: none;
     opacity: 0;
@@ -95,15 +146,15 @@ import { links } from '../data/links';
     width: 100%;
     height: 100%;
     fill: var(--accent);
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6));
   }
   .menu-toque {
     position: absolute;
-    left: 0.62rem;
-    top: 0.42rem;
-    width: 1.5rem;
-    height: 1.5rem;
-    margin: -0.75rem 0 0 -0.75rem;
+    left: 0.66rem;
+    top: 0.46rem;
+    width: 1.6rem;
+    height: 1.6rem;
+    margin: -0.8rem 0 0 -0.8rem;
     border-radius: 50%;
     border: 2px solid var(--accent);
     transform: scale(0);
@@ -142,7 +193,7 @@ import { links } from '../data/links';
     const posiciona = (el: HTMLElement) => {
       const mr = menu.getBoundingClientRect();
       const r = el.getBoundingClientRect();
-      const x = r.right - mr.left - 26;
+      const x = r.right - mr.left - 30;
       const y = r.top - mr.top + r.height / 2 - 8;
       mao.style.transform = `translate(${x}px, ${y}px)`;
     };

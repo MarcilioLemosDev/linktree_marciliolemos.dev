@@ -7,29 +7,3 @@ import '../styles/global.css';
 <Layout>
   <Console />
 </Layout>
-
-<script>
-  import { createArcade } from '../scripts/arcade';
-  import { initController, type Controller } from '../scripts/controller';
-
-  const canvas = document.getElementById('game') as HTMLCanvasElement | null;
-  const lcd = document.getElementById('lcd');
-  const scoreEl = document.getElementById('score');
-  const hiEl = document.getElementById('hi');
-
-  if (canvas) {
-    let controller: Controller | null = null;
-
-    const arcade = createArcade({
-      canvas,
-      scoreEl,
-      hiEl,
-      getHeld: () => controller?.held ?? new Set(),
-    });
-
-    controller = initController({
-      swipeTarget: lcd,
-      onPress: (button) => arcade.press(button),
-    });
-  }
-</script>

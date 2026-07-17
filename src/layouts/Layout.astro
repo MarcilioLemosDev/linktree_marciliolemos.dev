@@ -1,12 +1,15 @@
 ---
+import '@fontsource-variable/inter';
+import Analytics from '@vercel/analytics/astro';
+
 interface Props {
   title?: string;
   description?: string;
 }
 
 const {
-  title = 'Marcílio Lemos',
-  description = 'Bio interativa — jogue Snake e acesse meus projetos.',
+  title = 'Marcílio Lemos · marciliolemos.dev',
+  description = 'Links de Marcílio Lemos: projetos, contato e mais.',
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -22,7 +25,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#2b3a67" />
+    <meta name="theme-color" content="#05070c" />
 
     <!-- Open Graph / preview no Instagram, WhatsApp etc. -->
     <meta property="og:type" content="website" />
@@ -35,5 +38,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   </head>
   <body>
     <slot />
+    <Analytics />
   </body>
 </html>

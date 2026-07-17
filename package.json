@@ -1,8 +1,8 @@
 {
   "name": "linktree-marciliolemos-dev",
   "type": "module",
-  "version": "0.1.0",
-  "description": "Linktree retrô no estilo de um handheld antigo (Snake jogável) para marciliolemos.dev",
+  "version": "0.2.0",
+  "description": "Linktree em layout de celular (iPhone) para marciliolemos.dev",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -11,6 +11,8 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.2.8",
+    "@vercel/analytics": "^2.0.1",
     "astro": "^5.6.1"
   }
 }

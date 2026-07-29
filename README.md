@@ -1,27 +1,35 @@
 # marciliolemos.dev
 
-Site de **Marcílio Lemos** — Desenvolvedor de Software. Página única em Astro
-estático, tema espacial com iconografia da NASA/ESA, apresentando os serviços
-de TI e captando contato por um diagnóstico qualificado.
+Site de página única em Astro estático. Fundo de espaço profundo com campo de
+estrelas em canvas, apresentando os produtos de TI e capturando contato por um
+formulário único de diagnóstico.
 
-## Serviços apresentados
+A marca aparece só no app bar, como o próprio domínio — sem logo.
+
+## Produtos
 
 1. **Sites e landing pages** — institucional, landing de conversão, vitrine
-2. **Aplicativos** — web, mobile e desktop (do MVP ao app publicado)
-3. **Dados e BI** — dashboards, integração de fontes, automação de relatórios
-4. **TI em geral** — automações, APIs, integrações, manutenção e sustentação
+2. **Aplicativos** — web, mobile e desktop
+3. **Dados e BI** — dashboards, integração de fontes, relatórios automáticos
+4. **TI em geral** — automações, APIs, integrações e sustentação
+
+Todos os CTAs abrem o **mesmo formulário**; o card só pré-responde a primeira
+pergunta (o escopo). Assim a captura sai sempre num **formato único**.
 
 ## Stack
 
 - **Astro 7** (`output: 'static'`), `@astrojs/sitemap`
 - **i18n**: `pt` (padrão), `en`, `fr` — `en`/`fr` servem o conteúdo pt-BR via
-  fallback automático do Astro até a tradução real
-- **GSAP ScrollTrigger** (véu do herói e entradas) + **Lenis** (scroll suave),
-  num `<script>` central em `src/pages/index.astro`
-- **Canvas próprio** para o céu estrelado com paralaxe
-- Fontes via Fontsource (Space Grotesk Variable + IBM Plex Mono) — empacotadas
-  no build, zero chamadas externas em runtime
-- **@vercel/analytics** (Web Analytics)
+  fallback automático do Astro
+- **Campo de estrelas próprio** em canvas (`src/scripts/estrelas.ts`):
+  distribuição de magnitude, cor por classe espectral, brilho somado com
+  espículas de difração e paralaxe por profundidade. Sprites pré-renderizados,
+  então o laço por frame só faz `drawImage`
+- **GSAP ScrollTrigger** (entradas por scroll) + **Lenis** (scroll suave, só no
+  desktop — no mobile o scroll nativo é mais previsível)
+- Fontes via Fontsource (Space Grotesk Variable + IBM Plex Mono), empacotadas
+  no build — zero chamadas externas em runtime
+- **@vercel/analytics**
 - Zero dependências de UI; design system em `src/styles/global.css`
 
 ## Arquitetura
@@ -30,33 +38,34 @@ de TI e captando contato por um diagnóstico qualificado.
 src/
 ├── pages/index.astro          # página única (head inline + script central)
 ├── components/
-│   ├── Hud.astro              # appbar: marca, Serviços, idioma, Diagnóstico
-│   ├── Heroi.astro            # herói (Terra ao fundo, pinned + véu)
-│   ├── Orbita.astro           # órbita ambiente de planetas
-│   ├── ProvaSocial.astro      # projeto mais recente (MI6)
-│   ├── Produtos.astro         # os 4 escopos de serviço
-│   ├── Aplicacao.astro        # diálogo de contato
-│   ├── Quiz.astro             # diagnóstico de 5 perguntas
-│   └── Rodape.astro           # identidade + contatos
-├── dados/
-│   ├── contato.ts             # ⚙️ WhatsApp, LinkedIn, Instagram
-│   └── corpos.ts              # planetas da órbita (imagem + glow)
-├── scripts/contato.ts         # mensagem + abertura do WhatsApp
+│   ├── Hud.astro              # app bar: marca, Produtos, idioma, Diagnóstico
+│   ├── Heroi.astro            # herói sobre o campo de estrelas
+│   ├── ProvaSocial.astro      # projeto em produção (MI6)
+│   ├── Produtos.astro         # as 4 frentes de entrega
+│   ├── Formulario.astro       # formulário único (5 perguntas + captura)
+│   └── Rodape.astro           # marca, contatos
+├── dados/contato.ts           # ⚙️ WhatsApp, LinkedIn, Instagram
+├── scripts/
+│   ├── estrelas.ts            # campo de estrelas
+│   └── captura.ts             # formato único + envio + WhatsApp
 └── styles/global.css          # tokens e todo o CSS
 public/
-├── logo.svg, favicon.svg      # monograma ML (ciano #3cc9e9)
-├── logo-mi6.png               # prova social
-└── space/*.jpg + credits.json # iconografia NASA/ESA, com proveniência
+├── favicon.svg, og.png        # ícone e preview de link
+└── logo-mi6.png               # prova social
 ```
 
-## Como os contatos chegam
+## Captura de leads
 
-O site é estático (sem backend). Ao enviar o formulário — tanto o diagnóstico
-quanto o diálogo direto — a mensagem é montada com as respostas e **abre o
-WhatsApp** já preenchida; o visitante só confirma o envio. Uma cópia fica em
-`localStorage["marciliolemos.contatos"]` no navegador de quem preencheu.
+O envio gera **um objeto plano** (uma chave por coluna) e vai para a URL de um
+fluxo do Power Automate que grava a linha numa planilha do Excel. As colunas e
+a ordem vivem em `COLUNAS`, em `src/scripts/captura.ts`.
 
-Para trocar o número ou as redes: **`src/dados/contato.ts`**.
+Configuração do fluxo, da planilha e da variável `PUBLIC_CAPTURA_URL`:
+**[`docs/CAPTURA.md`](docs/CAPTURA.md)** (inclui o aviso de licença: o gatilho
+HTTP é premium e não vem no Microsoft 365 Business Basic).
+
+Sem a variável configurada, o formulário abre o **WhatsApp** com o resumo —
+nenhum contato se perde enquanto o fluxo não existir.
 
 ## Desenvolvimento
 
@@ -65,19 +74,18 @@ npm install
 npm run dev        # http://localhost:4321
 npm run build      # gera dist/
 npm run preview
-npm run fetch:imagery   # rebaixa imagens da NASA e atualiza credits.json
 ```
 
 ## Deploy e segurança
 
 Deploy na Vercel a cada push na `main`, domínio `marciliolemos.dev`.
 
-`vercel.json` aplica os cabeçalhos de segurança: **CSP** (com `script-src`
-restrito a same-origin, sem `unsafe-inline`), HSTS, `X-Content-Type-Options`,
-`X-Frame-Options: DENY`, `Referrer-Policy` e `Permissions-Policy`.
+`vercel.json` aplica **CSP** (com `script-src` restrito a same-origin, sem
+`unsafe-inline`), HSTS, `X-Content-Type-Options`, `X-Frame-Options: DENY`,
+`Referrer-Policy` e `Permissions-Policy`.
 
 O build mantém todo JS e CSS em arquivos externos same-origin
 (`build.inlineStylesheets: 'never'` + `vite.build.assetsInlineLimit: 0`), então
-a CSP não depende de hashes por script — editar componentes não quebra a
-política. `style-src` permite estilos inline porque GSAP e Lenis animam via
-atributo `style`.
+a CSP não depende de hashes por script. `style-src` permite estilos inline
+porque GSAP e Lenis animam via atributo `style`; `connect-src` libera os hosts
+do Power Automate para o envio da captura.

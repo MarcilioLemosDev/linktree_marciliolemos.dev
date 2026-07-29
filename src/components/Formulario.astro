@@ -1,0 +1,305 @@
+---
+// Formulário único do site: todo CTA abre este overlay ([data-form]). Quando
+// vem de um card de produto, o atributo data-escopo já responde a primeira
+// pergunta. O envio gera um objeto plano no formato único (ver
+// src/scripts/captura.ts) e vira uma linha de planilha pelo fluxo.
+const perguntas = [
+  {
+    id: 'necessidade',
+    titulo: 'O que o seu negócio precisa agora?',
+    opcoes: ['Um site', 'Um aplicativo', 'Dados e BI', 'TI em geral', 'Ainda não sei'],
+  },
+  {
+    id: 'ramo',
+    titulo: 'O negócio vive de quê?',
+    opcoes: ['Serviços', 'Produtos', 'Os dois'],
+  },
+  {
+    id: 'descoberta',
+    titulo: 'Como um cliente novo costuma chegar?',
+    opcoes: ['Indicação', 'Redes sociais', 'Busca no Google', 'Não sei dizer'],
+  },
+  {
+    id: 'trava',
+    titulo: 'O que mais segura o crescimento hoje?',
+    opcoes: [
+      'Chega pouca gente',
+      'Chega gente, mas some antes de fechar',
+      'Fecha, mas falta organizar a operação',
+      'Falta enxergar os números',
+    ],
+  },
+  {
+    id: 'urgencia',
+    titulo: 'Em quanto tempo isso precisa estar resolvido?',
+    opcoes: ['O quanto antes', 'Nos próximos meses', 'Ainda em estudo'],
+  },
+];
+const total = perguntas.length + 1; // perguntas + captura (resultado = 100%)
+---
+
+<div
+  class="quiz"
+  data-form-overlay
+  hidden
+  aria-modal="true"
+  role="dialog"
+  aria-label="Diagnóstico"
+>
+  <div class="quiz-inner">
+    <header class="quiz-top">
+      <button type="button" class="mono quiz-voltar" data-form-voltar hidden>← Voltar</button>
+      <span class="mono quiz-passo"><span data-form-n>1</span> / {total}</span>
+      <button type="button" class="mono quiz-fechar" data-form-fechar aria-label="Fechar">
+        Fechar
+      </button>
+    </header>
+    <div class="quiz-bar" aria-hidden="true"><i data-form-bar></i></div>
+
+    <div class="quiz-palco">
+      {
+        perguntas.map((p, i) => (
+          <section
+            class="quiz-tela quiz-pergunta"
+            data-tela={`p${i}`}
+            data-pergunta={p.id}
+            hidden={i !== 0}
+          >
+            <p class="mono quiz-eyebrow">Pergunta {String(i + 1).padStart(2, '0')}</p>
+            <h2>{p.titulo}</h2>
+            <div class="quiz-opcoes">
+              {p.opcoes.map((o) => (
+                <button type="button" class="quiz-opcao" data-valor={o}>
+                  {o}
+                </button>
+              ))}
+            </div>
+          </section>
+        ))
+      }
+
+      <section class="quiz-tela quiz-captura" data-tela="captura" hidden>
+        <p class="mono quiz-eyebrow">Quase lá</p>
+        <h2>Onde você quer receber o diagnóstico?</h2>
+        <form data-form-el>
+          <div class="field">
+            <label class="mono" for="f-nome">Nome</label>
+            <input id="f-nome" name="nome" type="text" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label class="mono" for="f-email">E-mail</label>
+            <input id="f-email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label class="mono" for="f-wpp">WhatsApp (opcional)</label>
+            <input id="f-wpp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" />
+          </div>
+          <div class="field">
+            <label class="mono" for="f-msg">Quer acrescentar algo? (opcional)</label>
+            <textarea id="f-msg" name="mensagem" rows="3"></textarea>
+          </div>
+          <button type="submit" class="quiz-enviar">Enviar</button>
+        </form>
+      </section>
+
+      <section class="quiz-tela quiz-resultado" data-tela="resultado" hidden>
+        <p class="mono quiz-eyebrow" data-res-eyebrow></p>
+        <h2 data-res-titulo></h2>
+        <p class="quiz-res-frase" data-res-frase></p>
+        <a class="quiz-enviar quiz-zap" data-res-zap href="#" target="_blank" rel="noopener">
+          Continuar no WhatsApp
+        </a>
+        <button type="button" class="mono quiz-concluir-txt" data-form-fechar>Concluir</button>
+      </section>
+    </div>
+  </div>
+</div>
+
+<style>
+  .quiz-zap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .quiz-concluir-txt {
+    color: var(--faint);
+    letter-spacing: 0.16em;
+    font-size: 0.6rem;
+    min-height: 44px;
+  }
+
+  .quiz-concluir-txt:hover {
+    color: var(--ink);
+  }
+</style>
+
+<script>
+  import {
+    montaCaptura,
+    guardaLocal,
+    envia,
+    temEndpoint,
+    resumo,
+    linkWhatsapp,
+    type Captura,
+  } from '../scripts/captura';
+
+  const overlay = document.querySelector<HTMLElement>('[data-form-overlay]');
+  if (overlay) {
+    const telas = Array.from(overlay.querySelectorAll<HTMLElement>('.quiz-tela'));
+    const perguntas = telas.filter((t) => t.classList.contains('quiz-pergunta'));
+    const telaCaptura = overlay.querySelector<HTMLElement>('[data-tela="captura"]')!;
+    const telaResultado = overlay.querySelector<HTMLElement>('[data-tela="resultado"]')!;
+    const barra = overlay.querySelector<HTMLElement>('[data-form-bar]')!;
+    const nEl = overlay.querySelector<HTMLElement>('[data-form-n]')!;
+    const voltar = overlay.querySelector<HTMLElement>('[data-form-voltar]')!;
+    const formEl = overlay.querySelector<HTMLFormElement>('[data-form-el]')!;
+    const zapEl = overlay.querySelector<HTMLAnchorElement>('[data-res-zap]')!;
+    const ordem = [...perguntas, telaCaptura];
+    const total = perguntas.length + 1;
+
+    let respostas: Record<string, string> = {};
+    let escopo = '';
+    let passo = 0;
+    let inicio = 0; // primeira tela navegável (pula a 01 quando vem de um card)
+
+    const mostra = (alvo: HTMLElement) => telas.forEach((t) => (t.hidden = t !== alvo));
+
+    const irPara = (i: number) => {
+      passo = i;
+      const alvo = ordem[i];
+      mostra(alvo);
+      nEl.textContent = String(Math.min(i + 1, total));
+      barra.style.width = `${((i + 1) / total) * 100}%`;
+      voltar.hidden = i <= inicio;
+      const id = alvo.dataset.pergunta;
+      if (id) {
+        alvo.querySelectorAll<HTMLElement>('.quiz-opcao').forEach((b) => {
+          b.dataset.escolhida = String(b.dataset.valor === respostas[id]);
+        });
+      }
+      alvo.querySelector<HTMLElement>('.quiz-opcao, input, button')?.focus();
+    };
+
+    const abrir = (esc?: string) => {
+      respostas = {};
+      escopo = esc ?? '';
+      formEl.reset();
+      // Vindo de um card, o escopo já responde a pergunta 01.
+      if (escopo) {
+        respostas.necessidade = escopo;
+        inicio = 1;
+      } else {
+        inicio = 0;
+      }
+      overlay.hidden = false;
+      document.documentElement.style.overflow = 'hidden';
+      irPara(inicio);
+    };
+
+    const fechar = () => {
+      overlay.hidden = true;
+      document.documentElement.style.overflow = '';
+    };
+
+    document.querySelectorAll<HTMLElement>('[data-form]').forEach((b) => {
+      b.addEventListener('click', (e) => {
+        e.preventDefault();
+        abrir(b.dataset.escopo);
+      });
+    });
+    overlay.querySelectorAll<HTMLElement>('[data-form-fechar]').forEach((b) => {
+      b.addEventListener('click', fechar);
+    });
+    voltar.addEventListener('click', () => {
+      if (passo > inicio) irPara(passo - 1);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !overlay.hidden) fechar();
+    });
+
+    perguntas.forEach((tela, i) => {
+      tela.querySelectorAll<HTMLButtonElement>('.quiz-opcao').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          respostas[tela.dataset.pergunta!] = btn.dataset.valor!;
+          tela.querySelectorAll<HTMLElement>('.quiz-opcao').forEach((b) => {
+            b.dataset.escolhida = String(b === btn);
+          });
+          window.setTimeout(() => irPara(i + 1), 200);
+        });
+      });
+    });
+
+    const faixaDe = (r: Record<string, string>) =>
+      r.urgencia === 'O quanto antes'
+        ? 'quente'
+        : r.urgencia === 'Nos próximos meses'
+          ? 'morno'
+          : 'frio';
+
+    const TEXTOS: Record<string, { eyebrow: string; titulo: string; frase: string }> = {
+      quente: {
+        eyebrow: 'Diagnóstico · prioridade',
+        titulo: 'Dá para começar agora.',
+        frase:
+          'As respostas foram registradas. O retorno traz o caminho técnico e os próximos passos do projeto.',
+      },
+      morno: {
+        eyebrow: 'Diagnóstico · em preparo',
+        titulo: 'O diagnóstico está a caminho.',
+        frase: 'As respostas foram registradas. A proposta técnica chega em seguida.',
+      },
+      frio: {
+        eyebrow: 'Diagnóstico · no radar',
+        titulo: 'Começar a olhar já é o primeiro passo.',
+        frase: 'Ficou registrado. Quando quiser destravar, o diagnóstico continua valendo.',
+      },
+    };
+
+    formEl.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const dados = Object.fromEntries(new FormData(formEl).entries()) as Record<string, string>;
+      const faixa = faixaDe(respostas);
+      const captura: Captura = montaCaptura({
+        escopo,
+        necessidade: respostas.necessidade ?? '',
+        ramo: respostas.ramo ?? '',
+        descoberta: respostas.descoberta ?? '',
+        trava: respostas.trava ?? '',
+        urgencia: respostas.urgencia ?? '',
+        faixa,
+        nome: dados.nome ?? '',
+        email: dados.email ?? '',
+        whatsapp: dados.whatsapp ?? '',
+        mensagem: dados.mensagem ?? '',
+      });
+
+      guardaLocal(captura);
+      const enviado = envia(captura);
+      const url = linkWhatsapp(resumo(captura));
+      zapEl.href = url;
+
+      const t = TEXTOS[faixa];
+      overlay.querySelector<HTMLElement>('[data-res-eyebrow]')!.textContent = t.eyebrow;
+      overlay.querySelector<HTMLElement>('[data-res-titulo]')!.textContent = t.titulo;
+      overlay.querySelector<HTMLElement>('[data-res-frase]')!.textContent = t.frase;
+      mostra(telaResultado);
+      nEl.textContent = String(total);
+      barra.style.width = '100%';
+      voltar.hidden = true;
+
+      // Sem fluxo conectado, o WhatsApp é o único destino: abre na hora para
+      // nenhum contato se perder.
+      if (!enviado || !temEndpoint()) window.open(url, '_blank', 'noopener');
+    });
+
+    // Atalho direto, sem formulário.
+    document.querySelectorAll<HTMLElement>('[data-whatsapp]').forEach((b) => {
+      b.addEventListener('click', () => {
+        window.open(linkWhatsapp('Olá! Vim pelo site marciliolemos.dev.'), '_blank', 'noopener');
+      });
+    });
+  }
+</script>

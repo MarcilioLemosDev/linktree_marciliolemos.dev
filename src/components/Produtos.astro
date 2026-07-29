@@ -1,54 +1,50 @@
 ---
-// Serviços/produtos de TI oferecidos. Reaproveita o design system dos tiers
-// (.tiers/.tier/.tier-plus do global.css). Cada card abre o diálogo de contato
-// já com o escopo escolhido (data-preset), que vai junto na mensagem.
-const escopos = [
+// Produtos. Todos os CTAs abrem o MESMO formulário ([data-form]) já com o
+// escopo escolhido (data-escopo), então a captura sai num formato único.
+const produtos = [
   {
     eyebrow: '01 · Web',
     titulo: 'Sites e landing pages',
     texto:
-      'Site institucional, landing de conversão ou vitrine de produtos. Performance, SEO e layout responsivo — pronto para ser achado no Google e converter no celular.',
-    cta: 'Quero um site',
-    preset: 'Site',
+      'Institucional, landing de conversão ou vitrine de produtos. Carrega rápido, aparece na busca e converte no celular, onde está a maior parte do tráfego.',
+    escopo: 'Um site',
   },
   {
     eyebrow: '02 · Apps',
     titulo: 'Aplicativos',
     texto:
-      'Web, mobile e desktop. Do MVP enxuto para validar a ideia ao aplicativo publicado, com login, integrações e painel de administração.',
-    cta: 'Quero um app',
-    preset: 'Aplicativo',
+      'Web, mobile e desktop. Do MVP que valida a ideia ao aplicativo publicado, com login, integrações e painel de administração.',
+    escopo: 'Um aplicativo',
   },
   {
     eyebrow: '03 · Dados',
     titulo: 'Dados e BI',
     texto:
-      'Dashboards, integração de fontes, automação de relatórios e modelagem. Os seus números num só lugar, confiáveis e sempre atualizados.',
-    cta: 'Quero ver meus dados',
-    preset: 'Dados e BI',
+      'Dashboards, integração de fontes e relatórios automáticos. Os números saem da planilha manual e chegam prontos, atualizados e auditáveis.',
+    escopo: 'Dados e BI',
   },
 ];
 ---
 
 <section id="servicos" class="orbitas">
   <header class="orbitas-head">
-    <p class="mono">Serviços</p>
-    <h2>O que eu construo</h2>
+    <p class="mono">Produtos</p>
+    <h2>Quatro frentes de entrega</h2>
     <p class="orbitas-lead">
-      Produtos de TI de ponta a ponta: da interface que o seu cliente usa ao
-      dado que orienta a sua decisão.
+      Cada frente resolve uma parte do caminho: a interface que o cliente usa, o
+      sistema que sustenta a operação e o dado que orienta a decisão.
     </p>
   </header>
 
   <div class="tiers">
     {
-      escopos.map((e) => (
+      produtos.map((p) => (
         <article class="tier">
-          <p class="mono">{e.eyebrow}</p>
-          <h3>{e.titulo}</h3>
-          <p>{e.texto}</p>
-          <button type="button" class="tier-cta" data-aplicar="projeto" data-preset={e.preset}>
-            {e.cta}
+          <p class="mono">{p.eyebrow}</p>
+          <h3>{p.titulo}</h3>
+          <p>{p.texto}</p>
+          <button type="button" class="tier-cta" data-form data-escopo={p.escopo}>
+            Solicitar proposta
           </button>
         </article>
       ))
@@ -59,12 +55,12 @@ const escopos = [
         <p class="mono">04 · Sob demanda</p>
         <h3>TI em geral</h3>
         <p>
-          Automações, APIs, integração entre sistemas, manutenção e sustentação.
-          Se envolve tecnologia na sua operação, dá para resolver.
+          Automações, APIs, integração entre sistemas e sustentação. Quando a
+          operação depende de tecnologia, ela precisa continuar de pé.
         </p>
       </div>
-      <button type="button" class="tier-cta" data-aplicar="projeto" data-preset="TI em geral">
-        Falar sobre TI
+      <button type="button" class="tier-cta" data-form data-escopo="TI em geral">
+        Solicitar proposta
       </button>
     </article>
   </div>

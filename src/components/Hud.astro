@@ -9,11 +9,11 @@ const atual = idiomas.find((i) => i.code === (Astro.currentLocale ?? 'pt')) ?? i
 
 <div class="hud-progress" data-hud-progress></div>
 <header class="hud-top">
-  <button type="button" class="mono hud-brand" data-stop="sol" aria-label="Voltar ao topo">
-    <img src="/logo.svg" alt="" width="12" height="12" /> Marcílio Lemos
+  <button type="button" class="mono hud-brand" data-stop="topo" aria-label="Voltar ao topo">
+    marciliolemos<span class="marca-tld">.dev</span>
   </button>
   <nav class="hud-nav" aria-label="Menu">
-    <button type="button" class="mono hud-link" data-stop="servicos">Serviços</button>
+    <button type="button" class="mono hud-link" data-stop="servicos">Produtos</button>
     <div class="hud-lang" data-lang-switch>
       <button
         type="button"
@@ -39,6 +39,12 @@ const atual = idiomas.find((i) => i.code === (Astro.currentLocale ?? 'pt')) ?? i
         }
       </ul>
     </div>
-    <button type="button" class="mono hud-cta" data-quiz>Diagnóstico</button>
+    <button type="button" class="mono hud-cta" data-form>Diagnóstico</button>
   </nav>
 </header>
+
+<style>
+  .marca-tld {
+    color: var(--gold);
+  }
+</style>

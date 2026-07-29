@@ -1,43 +1,25 @@
 ---
-// Herói: a Terra ao fundo, sob um véu que se levanta no scroll. Marca pessoal
-// + promessa de categoria (soluções de TI) + captação imediata. A órbita
-// ambiente (planetas vindo dos lados) fica entre o scrim e o véu.
-import Orbita from './Orbita.astro';
+// Herói: texto sobre o campo de estrelas. Sem imagem de planeta e sem logo —
+// a marca vive só no app bar. Promessa de categoria + entrada no formulário.
 ---
 
-<section id="sol" class="hero">
-  <div class="hero-sun">
-    <img
-      src="/space/terra.jpg"
-      alt="A Terra vista pela tripulação da Apollo 17, a Blue Marble (NASA)"
-      width="1024"
-      height="1024"
-      fetchpriority="high"
-    />
-  </div>
-  <div class="hero-scrim" aria-hidden="true"></div>
-  <Orbita />
-  <div class="hero-veil" aria-hidden="true"></div>
+<section id="topo" class="hero">
+  <div class="hero-vinheta" aria-hidden="true"></div>
   <div class="hero-copy">
-    <img class="hero-logo" src="/logo.svg" alt="" width="200" height="200" />
-    <p class="hero-kicker">Marcílio Lemos</p>
     <p class="mono eyebrow">Sites · Aplicativos · Dados &amp; BI</p>
     <h1>
       Tecnologia <em>sob medida</em> para o seu negócio.
     </h1>
     <p class="hero-tag">
-      Desenvolvimento de sites, aplicativos e soluções de dados — do primeiro
-      protótipo à operação rodando em produção.
+      Sites, aplicativos e plataformas de dados projetados, construídos e
+      mantidos — do primeiro protótipo à operação em produção.
     </p>
-    <button type="button" class="hero-cta" data-quiz>
-      Descobrir o que o meu negócio precisa
-    </button>
+    <button type="button" class="hero-cta" data-form>Iniciar diagnóstico</button>
     <p class="hero-caption">
-      Software feito com método: interface que converte, dados confiáveis e
-      decisões apoiadas em números.
+      Interface que converte, dados confiáveis e decisões apoiadas em números.
     </p>
-    <button type="button" class="hero-direto mono" data-aplicar="projeto">
-      Prefiro falar direto
+    <button type="button" class="hero-direto mono" data-whatsapp>
+      Falar direto no WhatsApp
     </button>
   </div>
 </section>

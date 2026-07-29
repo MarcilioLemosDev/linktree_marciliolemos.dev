@@ -9,8 +9,7 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro",
-    "fetch:imagery": "node scripts/fetch-imagery.mjs"
+    "astro": "astro"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

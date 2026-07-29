@@ -5,9 +5,9 @@ const ano = new Date().getFullYear();
 
 <footer class="footer">
   <div class="footer-id">
-    <p class="nome">Marcílio Lemos</p>
-    <p class="mono">Desenvolvedor de Software · Brasil</p>
-    <p class="mono">© {ano} · marciliolemos.dev</p>
+    <p class="nome mono">marciliolemos<span class="marca-tld">.dev</span></p>
+    <p class="mono">Desenvolvimento de software · Brasil</p>
+    <p class="mono">© {ano}</p>
   </div>
 
   <nav class="footer-contatos" aria-label="Contato">
@@ -19,18 +19,22 @@ const ano = new Date().getFullYear();
       ))
     }
   </nav>
-
-  <div class="footer-credits">
-    <p class="mono">
-      Imagens: NASA / ESA · NASA Image Library (domínio público)
-    </p>
-  </div>
 </footer>
 
 <style>
+  .footer-id .nome {
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+
+  .marca-tld {
+    color: var(--gold);
+  }
+
   .footer-contatos {
     display: grid;
-    gap: 0.5rem;
+    gap: 0.55rem;
     align-content: start;
   }
 
@@ -40,6 +44,7 @@ const ano = new Date().getFullYear();
     letter-spacing: 0.12em;
     text-decoration: none;
     transition: color 0.2s;
+    min-height: 24px;
   }
 
   .footer-contatos a:hover {

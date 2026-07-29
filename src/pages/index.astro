@@ -1,9 +1,327 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Console from '../components/Console.astro';
+import '@fontsource-variable/space-grotesk';
+import '@fontsource/ibm-plex-mono';
+import '@fontsource/ibm-plex-mono/500.css';
 import '../styles/global.css';
+import Analytics from '@vercel/analytics/astro';
+
+import Hud from '../components/Hud.astro';
+import Heroi from '../components/Heroi.astro';
+import ProvaSocial from '../components/ProvaSocial.astro';
+import Produtos from '../components/Produtos.astro';
+import Rodape from '../components/Rodape.astro';
+import Aplicacao from '../components/Aplicacao.astro';
+import Quiz from '../components/Quiz.astro';
+
+const site = Astro.site ?? new URL('http://localhost:4321');
+const canonical = new URL('/', site).href;
+const ogImg = new URL('/space/terra.jpg', site).href;
+const titulo = 'Marcílio Lemos · Sites, aplicativos e soluções de dados e BI';
+const descricao =
+  'Desenvolvedor de software. Sites, aplicativos (web, mobile e desktop), dados e BI, e produtos de TI sob medida — do primeiro protótipo à operação em produção.';
 ---
 
-<Layout>
-  <Console />
-</Layout>
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover"
+    />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#04050a" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{titulo}</title>
+    <meta name="description" content={descricao} />
+    <meta name="author" content="Marcílio Lemos" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content="Marcílio Lemos" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descricao} />
+    <meta property="og:image" content={ogImg} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={titulo} />
+    <meta name="twitter:description" content={descricao} />
+    <meta name="twitter:image" content={ogImg} />
+  </head>
+  <body>
+    <canvas class="starfield" aria-hidden="true"></canvas>
+    <Hud />
+    <div class="grain" aria-hidden="true"></div>
+    <main>
+      <Heroi />
+      <ProvaSocial />
+      <Produtos />
+    </main>
+    <Rodape />
+    <Aplicacao />
+    <Quiz />
+    <Analytics />
+
+    <script>
+      import gsap from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+      import Lenis from 'lenis';
+      import { montaMensagem, abreWhatsapp, guardaContato } from '../scripts/contato';
+
+      gsap.registerPlugin(ScrollTrigger);
+      // Barra de endereço do celular colapsa/expande sem re-medir os pins.
+      ScrollTrigger.config({ ignoreMobileResize: true });
+
+      const motionOk = window.matchMedia(
+        '(prefers-reduced-motion: no-preference)'
+      ).matches;
+
+      /* ── Scroll suave (Lenis dirigido pelo ticker do GSAP) ───────────── */
+      let lenis: Lenis | null = null;
+      if (motionOk) {
+        lenis = new Lenis({ lerp: 0.115 });
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => lenis!.raf(time * 1000));
+        gsap.ticker.lagSmoothing(0);
+      }
+
+      /* ── Céu estrelado com paralaxe ──────────────────────────────────── */
+      (function ceu() {
+        const canvas = document.querySelector<HTMLCanvasElement>('.starfield');
+        const ctx = canvas?.getContext('2d');
+        if (!canvas || !ctx) return;
+
+        const reduced = !motionOk;
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+        let w = 0;
+        let h = 0;
+        let raf = 0;
+        let stars: {
+          x: number;
+          y: number;
+          r: number;
+          a: number;
+          tw: number;
+          ph: number;
+          sp: number;
+        }[] = [];
+
+        function gen() {
+          w = window.innerWidth;
+          h = window.innerHeight;
+          canvas!.width = w * dpr;
+          canvas!.height = h * dpr;
+          canvas!.style.width = `${w}px`;
+          canvas!.style.height = `${h}px`;
+          ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+          const n = Math.round((w * h) / 2600);
+          stars = Array.from({ length: n }, () => {
+            const layer = Math.random();
+            return {
+              x: Math.random() * w,
+              y: Math.random() * h,
+              r: 0.4 + Math.random() * (layer > 0.86 ? 1.5 : 0.85),
+              a: 0.22 + Math.random() * 0.6,
+              tw: 0.5 + Math.random() * 1.6,
+              ph: Math.random() * Math.PI * 2,
+              sp: 0.06 + layer * 0.45,
+            };
+          });
+        }
+
+        function draw(t: number) {
+          const scroll = window.scrollY;
+          ctx!.clearRect(0, 0, w, h);
+          ctx!.fillStyle = '#cfd8ff';
+          for (const s of stars) {
+            const yy = (((s.y - scroll * s.sp) % h) + h) % h;
+            const tw = reduced ? 1 : 0.72 + 0.28 * Math.sin((t / 1000) * s.tw + s.ph);
+            ctx!.globalAlpha = s.a * tw;
+            ctx!.beginPath();
+            ctx!.arc(s.x, yy, s.r, 0, 7);
+            ctx!.fill();
+          }
+          ctx!.globalAlpha = 1;
+          if (!reduced) raf = requestAnimationFrame(draw);
+        }
+
+        function start() {
+          if (reduced) draw(0);
+          else raf = requestAnimationFrame(draw);
+        }
+
+        gen();
+        start();
+        window.addEventListener('resize', () => {
+          gen();
+          if (reduced) draw(0);
+        });
+        document.addEventListener('visibilitychange', () => {
+          cancelAnimationFrame(raf);
+          if (!document.hidden) start();
+        });
+      })();
+
+      /* ── Véu do herói + entradas por scroll ──────────────────────────── */
+      if (motionOk) {
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: '#sol',
+              start: 'top top',
+              end: '+=55%',
+              scrub: 0.7,
+              pin: true,
+            },
+          })
+          .fromTo('.hero-veil', { opacity: 0.93 }, { opacity: 0, ease: 'none' }, 0)
+          .fromTo(
+            '.hero-sun',
+            { scale: 0.94, filter: 'brightness(0.35) saturate(0.8)' },
+            { scale: 1, filter: 'brightness(1) saturate(1)', ease: 'none' },
+            0
+          )
+          .to('.hero-hint', { opacity: 0, duration: 0.25 }, 0.05)
+          .to('.hero-copy', { y: -36, opacity: 0.9, ease: 'none' }, 0.55);
+
+        gsap
+          .timeline({
+            scrollTrigger: { trigger: '#prova', start: 'top 88%', end: 'top 55%', scrub: 1 },
+          })
+          .fromTo(
+            '.prova > *',
+            { y: 26, opacity: 0 },
+            { y: 0, opacity: 1, stagger: 0.12, ease: 'power2.out' }
+          );
+
+        gsap
+          .timeline({
+            scrollTrigger: { trigger: '#servicos', start: 'top 85%', end: 'top 45%', scrub: 1 },
+          })
+          .fromTo(
+            '.orbitas-head > *',
+            { y: 24, opacity: 0 },
+            { y: 0, opacity: 1, stagger: 0.1, ease: 'power2.out' }
+          )
+          .fromTo(
+            '.tier',
+            { y: 30, opacity: 0 },
+            { y: 0, opacity: 1, stagger: 0.09, ease: 'power2.out' },
+            0.1
+          );
+
+        window.addEventListener('load', () => ScrollTrigger.refresh());
+      }
+
+      /* ── HUD: progresso, paradas e navegação ─────────────────────────── */
+      const progressEl = document.querySelector<HTMLElement>('[data-hud-progress]');
+      const pctEl = document.querySelector<HTMLElement>('[data-hud-pct]');
+      const topBar = document.querySelector<HTMLElement>('.hud-top');
+      function onScroll() {
+        const doc = document.documentElement;
+        const max = doc.scrollHeight - doc.clientHeight;
+        const p = max > 0 ? doc.scrollTop / max : 0;
+        if (progressEl) progressEl.style.transform = `scaleX(${p})`;
+        if (pctEl) pctEl.textContent = String(Math.round(p * 100));
+        topBar?.classList.toggle('rolou', doc.scrollTop > 60);
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      const stopButtons = Array.from(
+        document.querySelectorAll<HTMLButtonElement>('[data-stop]')
+      );
+      stopButtons.forEach((b) => {
+        const id = b.dataset.stop!;
+        b.addEventListener('click', () => {
+          // "sol" = voltar ao topo. O herói é pinado (ScrollTrigger o envolve
+          // num pin-spacer), então o elemento #sol fica no fim desse espaço,
+          // não em 0 — rolar para #sol pararia no meio. Vamos direto ao topo.
+          if (id === 'sol') {
+            if (lenis) lenis.scrollTo(0, { duration: 1.2 });
+            else window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+          }
+          const alvo = document.getElementById(id);
+          if (!alvo) return;
+          if (lenis) lenis.scrollTo(alvo, { duration: 1.6 });
+          else alvo.scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+
+      /* ── Seletor de idioma ────────────────────────────────────────────── */
+      const langWrap = document.querySelector<HTMLElement>('[data-lang-switch]');
+      const langBtn = document.querySelector<HTMLButtonElement>('[data-lang-btn]');
+      const langMenu = document.querySelector<HTMLElement>('[data-lang-menu]');
+      langBtn?.addEventListener('click', () => {
+        const abrindo = langMenu?.hasAttribute('hidden');
+        langMenu?.toggleAttribute('hidden', !abrindo);
+        langBtn.setAttribute('aria-expanded', String(!!abrindo));
+      });
+      document.addEventListener('click', (e) => {
+        if (langWrap && !langWrap.contains(e.target as Node)) {
+          langMenu?.setAttribute('hidden', '');
+          langBtn?.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      /* ── Diálogo de contato ───────────────────────────────────────────── */
+      const dialog = document.querySelector<HTMLDialogElement>('[data-apply-dialog]');
+      const formView = document.querySelector<HTMLElement>('[data-apply-form]');
+      const doneView = document.querySelector<HTMLElement>('[data-apply-done]');
+      const formEl = document.querySelector<HTMLFormElement>('[data-apply-form-el]');
+      const presetEl = document.querySelector<HTMLElement>('[data-apply-preset]');
+      const fallbackEl = document.querySelector<HTMLAnchorElement>('[data-apply-fallback]');
+      const numero = dialog?.dataset.wpp ?? '';
+
+      let preset: string | null = null;
+
+      function abrir(p?: string) {
+        if (!dialog || !formView || !doneView || !formEl) return;
+        preset = p ?? null;
+        formView.hidden = false;
+        doneView.hidden = true;
+        formEl.reset();
+        if (presetEl) {
+          presetEl.hidden = !preset;
+          presetEl.textContent = preset ? `Escopo: ${preset}` : '';
+        }
+        dialog.showModal();
+      }
+
+      document.querySelectorAll<HTMLElement>('[data-aplicar]').forEach((b) => {
+        b.addEventListener('click', () => abrir(b.dataset.preset));
+      });
+      document.querySelectorAll<HTMLElement>('[data-apply-close]').forEach((b) => {
+        b.addEventListener('click', () => dialog?.close());
+      });
+      dialog?.addEventListener('click', (e) => {
+        if (e.target === dialog) dialog.close();
+      });
+
+      formEl?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const dados = Object.fromEntries(new FormData(formEl).entries()) as Record<
+          string,
+          string
+        >;
+        guardaContato({
+          quando: new Date().toISOString(),
+          tipo: 'projeto',
+          escopo: preset,
+          ...dados,
+        });
+        const texto = montaMensagem({
+          titulo: 'Contato pelo site',
+          nome: dados.nome ?? '',
+          email: dados.email ?? '',
+          escopo: preset,
+          mensagem: dados.mensagem ?? '',
+        });
+        const url = abreWhatsapp(numero, texto);
+        if (fallbackEl) fallbackEl.href = url;
+        if (formView) formView.hidden = true;
+        if (doneView) doneView.hidden = false;
+      });
+    </script>
+  </body>
+</html>

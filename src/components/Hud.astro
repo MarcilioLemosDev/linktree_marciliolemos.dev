@@ -1,0 +1,44 @@
+---
+const idiomas = [
+  { code: 'pt', href: '/', label: 'PT-BR' },
+  { code: 'en', href: '/en/', label: 'EN' },
+  { code: 'fr', href: '/fr/', label: 'FR' },
+];
+const atual = idiomas.find((i) => i.code === (Astro.currentLocale ?? 'pt')) ?? idiomas[0];
+---
+
+<div class="hud-progress" data-hud-progress></div>
+<header class="hud-top">
+  <button type="button" class="mono hud-brand" data-stop="sol" aria-label="Voltar ao topo">
+    <img src="/logo.svg" alt="" width="12" height="12" /> Marcílio Lemos
+  </button>
+  <nav class="hud-nav" aria-label="Menu">
+    <button type="button" class="mono hud-link" data-stop="servicos">Serviços</button>
+    <div class="hud-lang" data-lang-switch>
+      <button
+        type="button"
+        class="mono hud-lang-btn"
+        data-lang-btn
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        <span>{atual.label}</span>
+        <svg viewBox="0 0 10 6" aria-hidden="true">
+          <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4" />
+        </svg>
+      </button>
+      <ul class="hud-lang-menu mono" data-lang-menu hidden>
+        {
+          idiomas.map((i) => (
+            <li>
+              <a href={i.href} hreflang={i.code} data-active={i.code === atual.code}>
+                {i.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <button type="button" class="mono hud-cta" data-quiz>Diagnóstico</button>
+  </nav>
+</header>

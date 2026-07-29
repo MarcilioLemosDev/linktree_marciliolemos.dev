@@ -1,0 +1,83 @@
+[
+  {
+    "slug": "sol",
+    "nasa_id": "GSFC_20171208_Archive_e001517",
+    "title": "The Sun: One Year in One Image",
+    "center": "GSFC",
+    "date_created": null,
+    "source": "https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001517/GSFC_20171208_Archive_e001517~large.jpg"
+  },
+  {
+    "slug": "mercurio",
+    "nasa_id": "PIA15160",
+    "title": "Mercury Globe: 0°N, 0°E",
+    "center": "JPL",
+    "date_created": "2011-11-29T17:10:55Z",
+    "source": "https://images-assets.nasa.gov/image/PIA15160/PIA15160~large.jpg"
+  },
+  {
+    "slug": "venus",
+    "nasa_id": "S91-50688",
+    "title": "Global view of Venus from Magellan, Pioneer, and Venera data",
+    "center": "JSC",
+    "date_created": "1991-10-29T00:00:00Z",
+    "source": "https://images-assets.nasa.gov/image/S91-50688/S91-50688~large.jpg"
+  },
+  {
+    "slug": "terra",
+    "nasa_id": "as17-148-22727",
+    "title": "View of the Earth seen by the Apollo 17 crew traveling toward the moon",
+    "center": "JSC",
+    "date_created": "1972-12-07T00:00:00Z",
+    "source": "https://images-assets.nasa.gov/image/as17-148-22727/as17-148-22727~large.jpg"
+  },
+  {
+    "slug": "marte",
+    "nasa_id": "PIA02005",
+    "title": "Tharsis Volcanoes and Valles Marineris, Mars",
+    "center": "JPL",
+    "date_created": "2000-06-14T07:00:30Z",
+    "source": "https://images-assets.nasa.gov/image/PIA02005/PIA02005~orig.jpg"
+  },
+  {
+    "slug": "jupiter",
+    "nasa_id": "heic1914a",
+    "title": "Jupiter — Hubble OPAL portrait (27 jun 2019)",
+    "center": "ESA/Hubble",
+    "date_created": "2019-08-08",
+    "source": "https://cdn.esahubble.org/archives/images/screen/heic1914a.jpg",
+    "credit": "NASA, ESA, A. Simon (Goddard Space Flight Center), M.H. Wong (University of California, Berkeley) — CC BY 4.0"
+  },
+  {
+    "slug": "saturno",
+    "nasa_id": "PIA06193",
+    "title": "The Greatest Saturn Portrait ...Yet",
+    "center": "JPL",
+    "date_created": "2005-02-24T18:22:03Z",
+    "source": "https://images-assets.nasa.gov/image/PIA06193/PIA06193~large.jpg"
+  },
+  {
+    "slug": "urano",
+    "nasa_id": "PIA18182",
+    "title": "Uranus as seen by NASA Voyager 2",
+    "center": "JPL",
+    "date_created": "1986-12-18T00:00:00Z",
+    "source": "https://images-assets.nasa.gov/image/PIA18182/PIA18182~medium.jpg"
+  },
+  {
+    "slug": "netuno",
+    "nasa_id": "PIA00046",
+    "title": "Neptune Full Disk",
+    "center": "JPL",
+    "date_created": "1996-01-29T13:57:27Z",
+    "source": "https://images-assets.nasa.gov/image/PIA00046/PIA00046~orig.jpg"
+  },
+  {
+    "slug": "via-lactea",
+    "nasa_id": "PIA12348",
+    "title": "Great Observatories Unique Views of the Milky Way",
+    "center": "JPL",
+    "date_created": "2009-10-06T00:00:00Z",
+    "source": "https://images-assets.nasa.gov/image/PIA12348/PIA12348~large.jpg"
+  }
+]

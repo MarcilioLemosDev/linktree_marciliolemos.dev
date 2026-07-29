@@ -1,0 +1,48 @@
+---
+import { contatos } from '../dados/contato';
+const ano = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer-id">
+    <p class="nome">Marcílio Lemos</p>
+    <p class="mono">Desenvolvedor de Software · Brasil</p>
+    <p class="mono">© {ano} · marciliolemos.dev</p>
+  </div>
+
+  <nav class="footer-contatos" aria-label="Contato">
+    {
+      contatos.map((c) => (
+        <a class="mono" href={c.url} target="_blank" rel="noopener">
+          {c.label} ↗
+        </a>
+      ))
+    }
+  </nav>
+
+  <div class="footer-credits">
+    <p class="mono">
+      Imagens: NASA / ESA · NASA Image Library (domínio público)
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer-contatos {
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+
+  .footer-contatos a {
+    color: var(--dim);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-contatos a:hover {
+    color: var(--gold);
+  }
+</style>

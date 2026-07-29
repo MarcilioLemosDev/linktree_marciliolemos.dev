@@ -1,0 +1,70 @@
+---
+import { corpos } from '../dados/corpos';
+
+// Órbita ambiente do herói: o ponto de visão é de DENTRO da elipse. Os
+// planetas (menos a Terra, que é o fundo) giram numa mesma órbita, em
+// movimento constante, vindo dos lados: crescem ao passar na frente do
+// observador e encolhem ao recuar. O scroll dá um empurrão na rotação (eles
+// "se mostram" quando você rola), mas o giro nunca para. Posição por frame no
+// <script> do componente. Sem movimento reduzido: posições estáticas.
+---
+
+<div class="orbita-ambiente" data-orbita-ambiente aria-hidden="true">
+  {
+    corpos.map((p, i) => (
+      <div class="orb-a" data-orb-a data-i={i} style={`--glow:${p.glow}`}>
+        <img src={p.img} alt="" width="200" height="200" loading="lazy" decoding="async" />
+      </div>
+    ))
+  }
+</div>
+
+<script>
+  const camada = document.querySelector<HTMLElement>('[data-orbita-ambiente]');
+  if (camada) {
+    const orbes = Array.from(camada.querySelectorAll<HTMLElement>('[data-orb-a]'));
+    const N = orbes.length;
+    const TAU = Math.PI * 2;
+    const passo = TAU / N;
+    const motionOk = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+
+    const posiciona = (rot: number) => {
+      const w = camada.clientWidth;
+      const h = camada.clientHeight;
+      const RX = w * 0.42; // varredura larga (vindo dos lados)
+      const RY = h * 0.16; // arco vertical sutil (visão de dentro)
+      for (let i = 0; i < N; i++) {
+        const a = i * passo + rot;
+        const x = RX * Math.sin(a);
+        const y = RY * Math.cos(a);
+        const d = Math.cos(a); // -1 fundo … +1 frente (perto do observador)
+        const t = (d + 1) / 2;
+        const s = 0.5 + 0.95 * t; // fundo pequeno, frente grande
+        const el = orbes[i];
+        el.style.transform = `translate(-50%, -50%) translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) scale(${s.toFixed(3)})`;
+        el.style.zIndex = String(Math.round(t * 100));
+        el.style.opacity = (0.3 + 0.7 * t).toFixed(3);
+        el.style.filter = `brightness(${(0.45 + 0.55 * t).toFixed(3)})`;
+      }
+    };
+
+    if (!motionOk) {
+      posiciona(0);
+    } else {
+      let raf = 0;
+      const t0 = performance.now();
+      const loop = (agora: number) => {
+        const t = (agora - t0) / 1000;
+        // giro constante + empurrão do scroll (eles vêm dos lados ao rolar)
+        const rot = t * 0.14 + window.scrollY * 0.0011;
+        posiciona(rot);
+        raf = requestAnimationFrame(loop);
+      };
+      raf = requestAnimationFrame(loop);
+      document.addEventListener('visibilitychange', () => {
+        cancelAnimationFrame(raf);
+        if (!document.hidden) raf = requestAnimationFrame(loop);
+      });
+    }
+  }
+</script>

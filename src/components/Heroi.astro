@@ -1,0 +1,43 @@
+---
+// Herói: a Terra ao fundo, sob um véu que se levanta no scroll. Marca pessoal
+// + promessa de categoria (soluções de TI) + captação imediata. A órbita
+// ambiente (planetas vindo dos lados) fica entre o scrim e o véu.
+import Orbita from './Orbita.astro';
+---
+
+<section id="sol" class="hero">
+  <div class="hero-sun">
+    <img
+      src="/space/terra.jpg"
+      alt="A Terra vista pela tripulação da Apollo 17, a Blue Marble (NASA)"
+      width="1024"
+      height="1024"
+      fetchpriority="high"
+    />
+  </div>
+  <div class="hero-scrim" aria-hidden="true"></div>
+  <Orbita />
+  <div class="hero-veil" aria-hidden="true"></div>
+  <div class="hero-copy">
+    <img class="hero-logo" src="/logo.svg" alt="" width="200" height="200" />
+    <p class="hero-kicker">Marcílio Lemos</p>
+    <p class="mono eyebrow">Sites · Aplicativos · Dados &amp; BI</p>
+    <h1>
+      Tecnologia <em>sob medida</em> para o seu negócio.
+    </h1>
+    <p class="hero-tag">
+      Desenvolvimento de sites, aplicativos e soluções de dados — do primeiro
+      protótipo à operação rodando em produção.
+    </p>
+    <button type="button" class="hero-cta" data-quiz>
+      Descobrir o que o meu negócio precisa
+    </button>
+    <p class="hero-caption">
+      Software feito com método: interface que converte, dados confiáveis e
+      decisões apoiadas em números.
+    </p>
+    <button type="button" class="hero-direto mono" data-aplicar="projeto">
+      Prefiro falar direto
+    </button>
+  </div>
+</section>

@@ -1,0 +1,58 @@
+---
+// Diálogo de contato. O comportamento vive no script central do index; aqui só
+// o esqueleto. Ao enviar, monta a mensagem e abre o WhatsApp (o lead chega de
+// verdade); guarda uma cópia em localStorage["marciliolemos.contatos"].
+import { whatsappLabel, whatsappNumero } from '../dados/contato';
+---
+
+<dialog class="apply" data-apply-dialog data-wpp={whatsappNumero}>
+  <div data-apply-form>
+    <div class="apply-head">
+      <p class="mono" data-apply-kicker>Contato</p>
+      <h3 data-apply-title>Falar sobre um projeto</h3>
+      <span class="apply-preset mono" data-apply-preset hidden></span>
+    </div>
+    <form data-apply-form-el>
+      <div class="field">
+        <label class="mono" for="apply-nome">Nome</label>
+        <input id="apply-nome" name="nome" type="text" required />
+      </div>
+      <div class="field">
+        <label class="mono" for="apply-email">E-mail</label>
+        <input id="apply-email" name="email" type="email" required />
+      </div>
+      <div class="field">
+        <label class="mono" for="apply-msg-projeto">Sobre o projeto</label>
+        <textarea
+          id="apply-msg-projeto"
+          name="mensagem"
+          rows="4"
+          required
+          placeholder="O essencial: o que é, para quem e por quê."
+        ></textarea>
+      </div>
+      <div class="apply-actions">
+        <button type="submit" class="apply-send">Enviar pelo WhatsApp</button>
+        <button type="button" class="apply-close" data-apply-close>Fechar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="apply-done" data-apply-done hidden>
+    <p class="mono">Mensagem preparada</p>
+    <p>
+      Abrimos o WhatsApp com o seu resumo — é só enviar. Se não abriu,
+      <a data-apply-fallback href="#" target="_blank" rel="noopener">toque aqui</a>
+      ou chame direto no {whatsappLabel}.
+    </p>
+    <div class="apply-actions">
+      <button type="button" class="apply-close" data-apply-close>Fechar</button>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .apply-done a {
+    color: var(--gold);
+  }
+</style>

@@ -23,10 +23,32 @@ página leria a escolha antiga e devolveria o visitante, num pingue-pongue.
 
 ## Produtos
 
-1. **Sites e landing pages**: institucional, landing de conversão, vitrine
+Seis frentes, numa grade de três colunas, então as duas fileiras fecham sem
+buraco. A de IA fica com a borda de destaque.
+
+1. **Sites e landing pages**: institucional, campanha, vitrine
 2. **Aplicativos**: web, mobile e desktop
-3. **Dados e BI**: painéis, integração de fontes, relatórios automáticos
-4. **TI em geral**: automação, API, integração e sustentação
+3. **Dados e BI**: painéis, integração de fontes, relatório automático
+4. **Jogos**: navegador, celular e desktop
+5. **Operações com IA**: agente que atende, lê, preenche e abre chamado
+6. **TI em geral**: automação, API, integração e manutenção
+
+## Registro do texto
+
+A copy segue o que as páginas de produto da Anthropic e da OpenAI de fato
+escrevem, coletado em `claude.com/product/claude-code`,
+`claude.com/solutions/enterprise`, `claude.com/product/cowork` e
+`learn.chatgpt.com`. O que se repete nelas:
+
+- produto como sujeito, ou frase no imperativo dirigida ao leitor
+- verbo concreto e artefato com nome, no lugar de adjetivo
+- duas ou três frases curtas, em vez de uma longa
+- o leitor fica com o resultado: "You sign off", "You're always in control"
+- nada de pilha de adjetivo abstrato, que é a marca mais visível de texto de IA
+
+`scripts` de verificação cobrem isso: um deles varre o HTML gerado procurando
+39 termos de clichê em português e 35 em inglês, travessão e frase acima de 34
+palavras.
 
 ## Contato
 

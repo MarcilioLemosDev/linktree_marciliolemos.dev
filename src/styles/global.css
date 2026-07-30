@@ -816,6 +816,17 @@ main {
   color: #04121a;
 }
 
+/* Destaque sem sair da grade: a frente mais nova ganha acento, e as duas
+   fileiras de três continuam fechando sem buraco. */
+.tier-destaque {
+  border-color: rgba(60, 201, 233, 0.32);
+  background: linear-gradient(160deg, rgba(60, 201, 233, 0.07), rgba(255, 255, 255, 0.02) 58%);
+}
+
+.tier-destaque:hover {
+  border-color: rgba(60, 201, 233, 0.55);
+}
+
 .tier-plus {
   grid-column: 1 / -1;
   flex-direction: row;

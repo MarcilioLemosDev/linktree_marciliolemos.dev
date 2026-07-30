@@ -1,5 +1,6 @@
 ---
-// Cada card leva direto ao WhatsApp com a mensagem do escopo preenchida.
+// Seis frentes numa grade de três colunas, então as duas fileiras fecham sem
+// buraco. Cada card leva direto ao WhatsApp com a mensagem do escopo pronta.
 import { linkWhatsapp } from '../dados/contato';
 import type { Textos } from '../dados/textos';
 
@@ -8,6 +9,8 @@ interface Props {
 }
 const { t } = Astro.props;
 const link = (escopo: string) => linkWhatsapp(t.wa.escopo(escopo));
+// A frente de IA é a mais nova da lista e ganha a borda de destaque.
+const destaque = new Set(['operações com IA', 'AI operations']);
 ---
 
 <section id="servicos" class="orbitas">
@@ -20,7 +23,7 @@ const link = (escopo: string) => linkWhatsapp(t.wa.escopo(escopo));
   <div class="tiers">
     {
       t.produtos.itens.map((p) => (
-        <article class="tier">
+        <article class:list={['tier', { 'tier-destaque': destaque.has(p.escopo) }]}>
           <p class="mono">{p.eyebrow}</p>
           <h3>{p.titulo}</h3>
           <p>{p.texto}</p>
@@ -30,16 +33,5 @@ const link = (escopo: string) => linkWhatsapp(t.wa.escopo(escopo));
         </article>
       ))
     }
-
-    <article class="tier tier-plus">
-      <div class="tier-plus-copy">
-        <p class="mono">{t.produtos.plus.eyebrow}</p>
-        <h3>{t.produtos.plus.titulo}</h3>
-        <p>{t.produtos.plus.texto}</p>
-      </div>
-      <a class="tier-cta" href={link(t.produtos.plus.escopo)} target="_blank" rel="noopener">
-        {t.produtos.cta}
-      </a>
-    </article>
   </div>
 </section>

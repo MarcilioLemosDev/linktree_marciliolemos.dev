@@ -9,7 +9,8 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "verifica:texto": "node scripts/verifica-texto.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

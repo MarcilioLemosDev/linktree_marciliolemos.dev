@@ -59,8 +59,7 @@ const pt: Textos = {
     h1Depois: '.',
     tag: 'Sites, aplicativos, painéis de dados, jogos e automação com IA.',
     cta: 'Falar no WhatsApp',
-    legenda:
-      'Do primeiro protótipo até o sistema publicado. Você fala direto com quem escreve o código.',
+    legenda: 'Do primeiro protótipo até o sistema publicado.',
   },
   prova: {
     eyebrow: 'Em produção',
@@ -142,8 +141,7 @@ const en: Textos = {
     h1Depois: '.',
     tag: 'Websites, apps, data dashboards, games and AI automation.',
     cta: 'Message on WhatsApp',
-    legenda:
-      'From the first prototype to a published system. You talk straight to the person writing the code.',
+    legenda: 'From the first prototype to a published system.',
   },
   prova: {
     eyebrow: 'In production',

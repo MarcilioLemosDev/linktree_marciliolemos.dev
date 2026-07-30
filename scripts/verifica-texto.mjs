@@ -14,6 +14,11 @@ const PT = [
   'user experience', 'experiência única', 'sob medida', 'personalizado sob',
   'estaremos enviando', 'venha conhecer', 'o que você precisa saber',
   'em um mundo cada vez mais', 'aqui na', 'nossa missão é',
+  // metafora forcada: soa a ingles traduzido, nao a portugues falado
+  'fica de pé', 'ficar de pé', 'entra na operação', 'traz gente', 'cai direto',
+  'cuida do resto', 'chega sozinho', 'do começo ao fim', 'tirar do papel',
+  'tire do papel', 'coloque no ar', 'ponha no ar', 'dar o primeiro passo',
+  'que funciona de verdade', 'feito para funcionar',
 ];
 
 const EN = [
@@ -24,7 +29,8 @@ const EN = [
   'delve into', 'dive into', 'leverage', 'tailored solution', 'tailored solutions',
   'comprehensive solution', 'revolutionize', 'transform your business',
   'best-in-class', 'world-class', 'take your business to', 'look no further',
-  'in the ever-evolving', 'harness the power',
+  'in the ever-evolving', 'harness the power', 'stays up and running',
+  'brings people in', 'handles the rest', 'end to end', 'end-to-end',
 ];
 
 const AMBOS = ['—', '–', 'lorem ipsum'];

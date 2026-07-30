@@ -1,21 +1,19 @@
 ---
+// Prova social: o projeto mais recente em produção. O botão logo abaixo da
+// logo diz para onde o clique leva, porque a URL solta não parecia clicável.
 import type { Textos } from '../dados/textos';
 
 interface Props {
   t: Textos;
 }
 const { t } = Astro.props;
+const site = 'https://mi6consorcio.com.br';
 ---
 
 <section id="prova" class="prova">
   <p class="mono prova-eyebrow">{t.prova.eyebrow}</p>
-  <a
-    class="prova-cliente"
-    href="https://mi6consorcio.com.br"
-    target="_blank"
-    rel="noopener"
-    aria-label={t.prova.dica}
-  >
+
+  <a class="prova-cliente" href={site} target="_blank" rel="noopener" aria-label={t.prova.dica}>
     <img
       src="/logo-mi6.png"
       alt="MI6 Consórcio Nacional"
@@ -24,7 +22,53 @@ const { t } = Astro.props;
       loading="lazy"
       decoding="async"
     />
-    <span class="mono">mi6consorcio.com.br ↗</span>
   </a>
+
+  <a class="mono prova-cta" href={site} target="_blank" rel="noopener">
+    {t.prova.dica}
+    <span aria-hidden="true">↗</span>
+  </a>
+
   <p class="prova-frase">{t.prova.frase}</p>
 </section>
+
+<style>
+  /* Botão em pílula: diz o destino e parece clicável, ao contrário da URL
+     solta que estava ali antes. */
+  .prova-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-height: 44px;
+    padding: 0 1.15rem;
+    border: 1px solid var(--line);
+    border-radius: 99px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+    transition: background 0.25s, border-color 0.25s, color 0.25s;
+  }
+
+  @media (hover: hover) {
+    .prova-cta:hover {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #04121a;
+    }
+  }
+
+  .prova-cta:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 380px) {
+    .prova-cta {
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      padding: 0 0.9rem;
+    }
+  }
+</style>

@@ -66,7 +66,7 @@ const pt: Textos = {
     eyebrow: 'Em produção',
     frase:
       'Site institucional, simulador de consórcio e captação de contato pelo WhatsApp.',
-    dica: 'Abrir o projeto',
+    dica: 'Visitar mi6consorcio.com.br',
   },
   produtos: {
     eyebrow: 'Produtos',
@@ -148,7 +148,7 @@ const en: Textos = {
   prova: {
     eyebrow: 'In production',
     frase: 'Corporate site, consortium simulator and contact capture through WhatsApp.',
-    dica: 'Open the project',
+    dica: 'Visit mi6consorcio.com.br',
   },
   produtos: {
     eyebrow: 'Products',

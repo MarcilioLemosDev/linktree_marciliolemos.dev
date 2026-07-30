@@ -1,0 +1,169 @@
+---
+import '@fontsource-variable/space-grotesk';
+import '@fontsource/ibm-plex-mono';
+import '@fontsource/ibm-plex-mono/500.css';
+import '../styles/global.css';
+import Analytics from '@vercel/analytics/astro';
+
+import Cortina from '../components/Cortina.astro';
+import Hud from '../components/Hud.astro';
+import Heroi from '../components/Heroi.astro';
+import ProvaSocial from '../components/ProvaSocial.astro';
+import Produtos from '../components/Produtos.astro';
+import Rodape from '../components/Rodape.astro';
+import { textos, outroIdioma, type Idioma } from '../dados/textos';
+
+interface Props {
+  idioma: Idioma;
+}
+const { idioma } = Astro.props;
+const t = textos[idioma];
+const outro = outroIdioma[idioma];
+
+const site = Astro.site ?? new URL('http://localhost:4321');
+const caminho = idioma === 'pt' ? '/' : '/en/';
+const canonical = new URL(caminho, site).href;
+const alternativa = new URL(outro.href, site).href;
+const ogImg = new URL('/og.png', site).href;
+---
+
+<!doctype html>
+<html lang={t.htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover"
+    />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang={outro.idioma} href={alternativa} />
+    <link rel="alternate" hreflang={idioma} href={canonical} />
+    <link rel="alternate" hreflang="x-default" href={new URL('/', site).href} />
+    <meta name="theme-color" content="#010206" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{t.meta.titulo}</title>
+    <meta name="description" content={t.meta.descricao} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={idioma === 'pt' ? 'pt_BR' : 'en_US'} />
+    <meta property="og:site_name" content="marciliolemos.dev" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={t.meta.titulo} />
+    <meta property="og:description" content={t.meta.descricao} />
+    <meta property="og:image" content={ogImg} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={t.meta.titulo} />
+    <meta name="twitter:description" content={t.meta.descricao} />
+    <meta name="twitter:image" content={ogImg} />
+  </head>
+  <body>
+    <canvas class="starfield" aria-hidden="true"></canvas>
+    <Hud idioma={idioma} t={t} />
+    <div class="grain" aria-hidden="true"></div>
+    <main>
+      <Heroi t={t} />
+      <ProvaSocial t={t} />
+      <Produtos t={t} />
+    </main>
+    <Rodape t={t} />
+    <Cortina />
+    <Analytics />
+
+    <script>
+      import gsap from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+      import Lenis from 'lenis';
+      import { initEstrelas } from '../scripts/estrelas';
+
+      gsap.registerPlugin(ScrollTrigger);
+      // Barra de endereço do celular colapsa/expande sem re-medir os gatilhos.
+      ScrollTrigger.config({ ignoreMobileResize: true });
+
+      const motionOk = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+      const mobile = window.matchMedia('(max-width: 760px)').matches;
+
+      /* Campo de estrelas */
+      const ceu = document.querySelector<HTMLCanvasElement>('.starfield');
+      if (ceu) initEstrelas(ceu);
+
+      /* Scroll suave. No mobile o nativo é mais previsível (barra de endereço,
+         inércia do sistema, gesto de voltar), então o Lenis fica no desktop. */
+      let lenis: Lenis | null = null;
+      if (motionOk && !mobile) {
+        lenis = new Lenis({ lerp: 0.115 });
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => lenis!.raf(time * 1000));
+        gsap.ticker.lagSmoothing(0);
+      }
+
+      /* Entradas por scroll. Sem pin: o herói não prende a rolagem.
+         clearProps remove o style inline ao terminar, senão sobra transform
+         preso no elemento e o espaçamento do CSS deixa de valer. */
+      if (motionOk) {
+        gsap.from('.hero-copy > *', {
+          y: 22,
+          opacity: 0,
+          duration: 0.7,
+          stagger: 0.08,
+          ease: 'power2.out',
+          clearProps: 'all',
+        });
+
+        gsap
+          .timeline({
+            scrollTrigger: { trigger: '#prova', start: 'top 88%', end: 'top 55%', scrub: 1 },
+          })
+          .fromTo(
+            '.prova > *',
+            { y: 24, opacity: 0 },
+            { y: 0, opacity: 1, stagger: 0.12, ease: 'power2.out', clearProps: 'all' }
+          );
+
+        gsap
+          .timeline({
+            scrollTrigger: { trigger: '#servicos', start: 'top 85%', end: 'top 45%', scrub: 1 },
+          })
+          .fromTo(
+            '.orbitas-head > *',
+            { y: 22, opacity: 0 },
+            { y: 0, opacity: 1, stagger: 0.1, ease: 'power2.out', clearProps: 'all' }
+          )
+          .fromTo(
+            '.tier',
+            { y: 28, opacity: 0 },
+            { y: 0, opacity: 1, stagger: 0.09, ease: 'power2.out', clearProps: 'all' },
+            0.1
+          );
+
+        window.addEventListener('load', () => ScrollTrigger.refresh());
+      }
+
+      /* App bar: progresso e navegação */
+      const progressEl = document.querySelector<HTMLElement>('[data-hud-progress]');
+      const topBar = document.querySelector<HTMLElement>('.hud-top');
+      function onScroll() {
+        const doc = document.documentElement;
+        const max = doc.scrollHeight - doc.clientHeight;
+        const p = max > 0 ? doc.scrollTop / max : 0;
+        if (progressEl) progressEl.style.transform = `scaleX(${p})`;
+        topBar?.classList.toggle('rolou', doc.scrollTop > 60);
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      document.querySelectorAll<HTMLButtonElement>('[data-stop]').forEach((b) => {
+        const id = b.dataset.stop!;
+        b.addEventListener('click', () => {
+          if (id === 'topo') {
+            if (lenis) lenis.scrollTo(0, { duration: 1.2 });
+            else window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+          }
+          const alvo = document.getElementById(id);
+          if (!alvo) return;
+          if (lenis) lenis.scrollTo(alvo, { duration: 1.4 });
+          else alvo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+    </script>
+  </body>
+</html>

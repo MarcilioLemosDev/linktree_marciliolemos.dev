@@ -1,55 +1,31 @@
 ---
-// Produtos. Cada card leva direto ao WhatsApp com a mensagem do escopo já
-// preenchida, então a conversa começa sabendo o que o visitante procura.
+// Cada card leva direto ao WhatsApp com a mensagem do escopo preenchida.
 import { linkWhatsapp } from '../dados/contato';
+import type { Textos } from '../dados/textos';
 
-const produtos = [
-  {
-    eyebrow: '01 · Web',
-    titulo: 'Sites e landing pages',
-    texto:
-      'Site institucional, landing de conversão ou vitrine de produtos: carrega rápido, aparece na busca e converte no celular, onde está a maior parte do tráfego.',
-    escopo: 'um site',
-  },
-  {
-    eyebrow: '02 · Apps',
-    titulo: 'Aplicativos',
-    texto:
-      'Aplicativo web, mobile ou desktop, do MVP que valida a ideia até a versão publicada, com login, integrações e painel de administração.',
-    escopo: 'um aplicativo',
-  },
-  {
-    eyebrow: '03 · Dados',
-    titulo: 'Dados e BI',
-    texto:
-      'Painéis, integração de fontes e relatórios automáticos: os números saem da planilha manual e chegam prontos, atualizados e auditáveis.',
-    escopo: 'dados e BI',
-  },
-];
-
-const link = (escopo: string) =>
-  linkWhatsapp(`Olá! Vim pelo site marciliolemos.dev e quero falar sobre ${escopo}.`);
+interface Props {
+  t: Textos;
+}
+const { t } = Astro.props;
+const link = (escopo: string) => linkWhatsapp(t.wa.escopo(escopo));
 ---
 
 <section id="servicos" class="orbitas">
   <header class="orbitas-head">
-    <p class="mono">Produtos</p>
-    <h2>O que dá para construir</h2>
-    <p class="orbitas-lead">
-      Cada frente resolve uma parte do caminho: a interface que o cliente usa, o
-      sistema que sustenta a operação e o dado que orienta a decisão.
-    </p>
+    <p class="mono">{t.produtos.eyebrow}</p>
+    <h2>{t.produtos.titulo}</h2>
+    <p class="orbitas-lead">{t.produtos.lead}</p>
   </header>
 
   <div class="tiers">
     {
-      produtos.map((p) => (
+      t.produtos.itens.map((p) => (
         <article class="tier">
           <p class="mono">{p.eyebrow}</p>
           <h3>{p.titulo}</h3>
           <p>{p.texto}</p>
           <a class="tier-cta" href={link(p.escopo)} target="_blank" rel="noopener">
-            Falar no WhatsApp
+            {t.produtos.cta}
           </a>
         </article>
       ))
@@ -57,15 +33,12 @@ const link = (escopo: string) =>
 
     <article class="tier tier-plus">
       <div class="tier-plus-copy">
-        <p class="mono">04 · Sob demanda</p>
-        <h3>TI em geral</h3>
-        <p>
-          Automação, API, integração entre sistemas e sustentação. Quando a
-          operação depende de tecnologia, ela precisa continuar de pé.
-        </p>
+        <p class="mono">{t.produtos.plus.eyebrow}</p>
+        <h3>{t.produtos.plus.titulo}</h3>
+        <p>{t.produtos.plus.texto}</p>
       </div>
-      <a class="tier-cta" href={link('TI em geral')} target="_blank" rel="noopener">
-        Falar no WhatsApp
+      <a class="tier-cta" href={link(t.produtos.plus.escopo)} target="_blank" rel="noopener">
+        {t.produtos.cta}
       </a>
     </article>
   </div>

@@ -1,21 +1,22 @@
 ---
-// Herói: promessa na tarefa do leitor e um único CTA, no padrão das páginas de
-// produto das refs. O CTA é link puro para o WhatsApp, resolvido no build.
+// Herói: promessa na tarefa do leitor e um único CTA, direto no WhatsApp.
 import { linkWhatsapp } from '../dados/contato';
+import type { Textos } from '../dados/textos';
 
-const cta = linkWhatsapp('Olá! Vim pelo site marciliolemos.dev e quero falar sobre um projeto.');
+interface Props {
+  t: Textos;
+}
+const { t } = Astro.props;
+const cta = linkWhatsapp(t.wa.projeto);
 ---
 
 <section id="topo" class="hero">
   <div class="hero-vinheta" aria-hidden="true"></div>
   <div class="hero-copy">
-    <p class="mono eyebrow">Sites · Aplicativos · Dados e BI</p>
-    <h1>Software <em>sob medida</em> para o seu negócio.</h1>
-    <p class="hero-tag">
-      Sites, aplicativos e painéis de dados construídos do zero, do primeiro
-      protótipo até a operação rodando.
-    </p>
-    <a class="hero-cta" href={cta} target="_blank" rel="noopener">Falar no WhatsApp</a>
-    <p class="hero-caption">Atendimento direto com quem desenvolve.</p>
+    <p class="mono eyebrow">{t.heroi.eyebrow}</p>
+    <h1>{t.heroi.h1Antes}<em>{t.heroi.h1Destaque}</em>{t.heroi.h1Depois}</h1>
+    <p class="hero-tag">{t.heroi.tag}</p>
+    <a class="hero-cta" href={cta} target="_blank" rel="noopener">{t.heroi.cta}</a>
+    <p class="hero-caption">{t.heroi.legenda}</p>
   </div>
 </section>

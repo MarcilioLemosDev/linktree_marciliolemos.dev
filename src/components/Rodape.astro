@@ -1,16 +1,22 @@
 ---
 import { contatos } from '../dados/contato';
+import type { Textos } from '../dados/textos';
+
+interface Props {
+  t: Textos;
+}
+const { t } = Astro.props;
 const ano = new Date().getFullYear();
 ---
 
 <footer class="footer">
   <div class="footer-id">
     <p class="nome mono">marciliolemos<span class="marca-tld">.dev</span></p>
-    <p class="mono">Desenvolvimento de software · Brasil</p>
+    <p class="mono">{t.rodape.linha}</p>
     <p class="mono">© {ano}</p>
   </div>
 
-  <nav class="footer-contatos" aria-label="Contato">
+  <nav class="footer-contatos" aria-label="WhatsApp, LinkedIn, Instagram">
     {
       contatos.map((c) => (
         <a class="mono" href={c.url} target="_blank" rel="noopener">

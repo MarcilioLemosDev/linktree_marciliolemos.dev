@@ -1,0 +1,140 @@
+---
+// Cortina de entrada: duas metades em preto de espaço profundo, uma por idioma.
+// Ao escolher, as metades se abrem para os lados e revelam o site. A escolha
+// fica guardada, então quem volta não vê a cortina de novo.
+import { textos } from '../dados/textos';
+---
+
+<div class="cortina" data-cortina role="dialog" aria-label="Escolha o idioma / Choose your language">
+  <button type="button" class="cortina-lado cortina-pt" data-escolher="pt">
+    <span class="cortina-idioma">Português</span>
+    <span class="mono cortina-acao">{textos.pt.cortina.entrar}</span>
+  </button>
+
+  <button type="button" class="cortina-lado cortina-en" data-escolher="en">
+    <span class="cortina-idioma">English</span>
+    <span class="mono cortina-acao">{textos.en.cortina.entrar}</span>
+  </button>
+
+  <span class="cortina-fio" aria-hidden="true"></span>
+  <span class="mono cortina-marca" aria-hidden="true">
+    marciliolemos<span class="marca-tld">.dev</span>
+  </span>
+</div>
+
+<style>
+  .cortina {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* o canvas de estrelas fica atrás; a cortina é opaca até abrir */
+    background: #000205;
+  }
+
+  .cortina[hidden] {
+    display: none;
+  }
+
+  .cortina-lado {
+    position: relative;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 1rem;
+    padding: 1.5rem clamp(0.9rem, 5vw, 2.5rem);
+    background: radial-gradient(circle at 50% 42%, #0a1020 0%, #01030a 62%, #000104 100%);
+    color: var(--ink);
+    cursor: pointer;
+    transition:
+      transform 0.95s cubic-bezier(0.76, 0, 0.24, 1),
+      background 0.4s ease;
+    will-change: transform;
+  }
+
+  .cortina-en {
+    background: radial-gradient(circle at 50% 42%, #071626 0%, #01040a 62%, #000104 100%);
+  }
+
+  @media (hover: hover) {
+    .cortina-lado:hover {
+      background: radial-gradient(circle at 50% 42%, #12203a 0%, #02060f 64%, #000104 100%);
+    }
+  }
+
+  .cortina-lado:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: -6px;
+  }
+
+  .cortina-idioma {
+    font-size: clamp(1.25rem, 4.4vw, 2.4rem);
+    font-weight: 320;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+  }
+
+  .cortina-acao {
+    font-size: clamp(0.46rem, 1.5vw, 0.6rem);
+    letter-spacing: 0.16em;
+    color: var(--gold);
+    max-width: 12ch;
+    line-height: 1.6;
+  }
+
+  /* Vinco: só o fio, na divisa das duas metades. */
+  .cortina-fio {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    transform: translateX(-50%);
+    background: linear-gradient(to bottom, transparent, rgba(236, 238, 246, 0.2), transparent);
+    pointer-events: none;
+  }
+
+  /* A marca vai para o topo. No meio, ficava na mesma linha do texto de ação
+     das metades e passava a impressão de texto colado. */
+  .cortina-marca {
+    position: absolute;
+    top: max(1.9rem, env(safe-area-inset-top));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.54rem;
+    letter-spacing: 0.2em;
+    color: var(--faint);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .marca-tld {
+    color: var(--gold);
+  }
+
+  /* Abertura: as metades saem para os lados. */
+  .cortina.abrindo .cortina-pt {
+    transform: translateX(-101%);
+  }
+
+  .cortina.abrindo .cortina-en {
+    transform: translateX(101%);
+  }
+
+  .cortina.abrindo .cortina-fio,
+  .cortina.abrindo .cortina-marca {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cortina-lado {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import '../scripts/cortina';
+</script>

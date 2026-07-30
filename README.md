@@ -1,10 +1,25 @@
 # marciliolemos.dev
 
-Site de página única em Astro estático. Fundo de espaço profundo com campo de
-estrelas em canvas, apresentando os produtos de TI. Todo botão leva direto ao
-WhatsApp com a mensagem do escopo já preenchida.
+Site em Astro estático, em português e inglês. Fundo de espaço profundo com
+campo de estrelas em canvas, apresentando os produtos de TI. Todo botão leva
+direto ao WhatsApp com a mensagem do escopo já preenchida.
 
 A marca aparece só no app bar, como o próprio domínio, sem logo.
+
+## Idiomas
+
+Duas versões com tradução real, não fallback: `pt` em `/` e `en` em `/en/`.
+Todo o texto visível vive em **`src/dados/textos.ts`**, uma chave por string nos
+dois idiomas. O tipo `Textos` reprova o build se faltar tradução.
+
+A entrada é uma **cortina** em preto de espaço profundo, dividida ao meio: uma
+metade por idioma. Ao escolher, as metades abrem para os lados e revelam o site.
+A escolha fica em `localStorage`, então quem volta não vê a cortina, e quem
+escolheu o outro idioma é levado para lá.
+
+O app bar tem um botão de duas letras (`EN` ou `PT`) que leva à outra versão.
+Ele grava a preferência **antes** de navegar: sem isso, a cortina da outra
+página leria a escolha antiga e devolveria o visitante, num pingue-pongue.
 
 ## Produtos
 
@@ -24,8 +39,7 @@ Número, LinkedIn e Instagram ficam em **`src/dados/contato.ts`**.
 ## Stack
 
 - **Astro 7** (`output: 'static'`), `@astrojs/sitemap`
-- **i18n**: `pt` (padrão), `en`, `fr`. `en`/`fr` servem o conteúdo pt-BR via
-  fallback automático do Astro
+- **i18n**: `pt` (padrão) e `en`, cada um com o próprio texto
 - **Campo de estrelas próprio** em canvas (`src/scripts/estrelas.ts`):
   distribuição de magnitude, cor por classe espectral, brilho somado com
   espículas de difração e paralaxe por profundidade. Sprites pré-renderizados,
@@ -41,15 +55,22 @@ Número, LinkedIn e Instagram ficam em **`src/dados/contato.ts`**.
 
 ```
 src/
-├── pages/index.astro          # página única (head inline + script central)
+├── pages/index.astro          # pt
+├── pages/en/index.astro       # en
 ├── components/
+│   ├── Cortina.astro          # cortina de entrada, uma metade por idioma
 │   ├── Hud.astro              # app bar: marca, Produtos, idioma, WhatsApp
 │   ├── Heroi.astro            # herói sobre o campo de estrelas
 │   ├── ProvaSocial.astro      # projeto em produção (MI6)
 │   ├── Produtos.astro         # as quatro frentes de entrega
 │   └── Rodape.astro           # marca e contatos
-├── dados/contato.ts           # ⚙️ WhatsApp, LinkedIn, Instagram
-├── scripts/estrelas.ts        # campo de estrelas
+├── layouts/Pagina.astro       # a página inteira, servindo os dois idiomas
+├── dados/
+│   ├── contato.ts             # ⚙️ WhatsApp, LinkedIn, Instagram
+│   └── textos.ts              # ⚙️ toda a copy, pt e en
+├── scripts/
+│   ├── estrelas.ts            # campo de estrelas
+│   └── cortina.ts             # escolha de idioma e abertura
 └── styles/global.css          # tokens e todo o CSS
 public/
 ├── favicon.svg, og.png        # ícone e preview de link
@@ -65,6 +86,13 @@ public/
    coisas escrevem a mesma propriedade e sobra `transform` inline preso no
    elemento, o que empurrava o botão do herói contra a legenda de baixo. O hover
    usa a propriedade autônoma `translate`, e as entradas usam `clearProps`.
+3. **Não basta não sobrepor.** Dois textos podem ter caixas separadas e ainda
+   parecer colados por estarem na mesma faixa vertical, como aconteceu com a
+   marca no vinco da cortina. A verificação mede folga, não só colisão.
+
+A verificação roda em 6 larguras de tela, nos dois idiomas, medindo espaço entre
+elementos, sobreposição, overflow horizontal, altura de alvo de toque, erro de
+JS e violação de CSP.
 
 ## Desenvolvimento
 

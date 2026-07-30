@@ -1,53 +1,57 @@
 ---
 import { linkWhatsapp } from '../dados/contato';
+import { outroIdioma, type Idioma, type Textos } from '../dados/textos';
 
-const cta = linkWhatsapp('Olá! Vim pelo site marciliolemos.dev.');
-const idiomas = [
-  { code: 'pt', href: '/', label: 'PT-BR' },
-  { code: 'en', href: '/en/', label: 'EN' },
-  { code: 'fr', href: '/fr/', label: 'FR' },
-];
-const atual = idiomas.find((i) => i.code === (Astro.currentLocale ?? 'pt')) ?? idiomas[0];
+interface Props {
+  idioma: Idioma;
+  t: Textos;
+}
+const { idioma, t } = Astro.props;
+const outro = outroIdioma[idioma];
+const cta = linkWhatsapp(t.wa.geral);
 ---
 
 <div class="hud-progress" data-hud-progress></div>
 <header class="hud-top">
-  <button type="button" class="mono hud-brand" data-stop="topo" aria-label="Voltar ao topo">
+  <button type="button" class="mono hud-brand" data-stop="topo" aria-label="marciliolemos.dev">
     marciliolemos<span class="marca-tld">.dev</span>
   </button>
-  <nav class="hud-nav" aria-label="Menu">
-    <button type="button" class="mono hud-link" data-stop="servicos">Produtos</button>
-    <div class="hud-lang" data-lang-switch>
-      <button
-        type="button"
-        class="mono hud-lang-btn"
-        data-lang-btn
-        aria-haspopup="true"
-        aria-expanded="false"
-      >
-        <span>{atual.label}</span>
-        <svg viewBox="0 0 10 6" aria-hidden="true">
-          <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4" />
-        </svg>
-      </button>
-      <ul class="hud-lang-menu mono" data-lang-menu hidden>
-        {
-          idiomas.map((i) => (
-            <li>
-              <a href={i.href} hreflang={i.code} data-active={i.code === atual.code}>
-                {i.label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-    <a class="mono hud-cta" href={cta} target="_blank" rel="noopener">WhatsApp</a>
+  <nav class="hud-nav" aria-label={t.hud.produtos}>
+    <button type="button" class="mono hud-link" data-stop="servicos">{t.hud.produtos}</button>
+    <a
+      class="mono hud-idioma"
+      href={outro.href}
+      hreflang={outro.idioma}
+      data-trocar-idioma={outro.idioma}
+      aria-label={t.hud.trocarIdioma}
+      title={t.hud.trocarIdioma}>{outro.rotulo}</a
+    >
+    <a class="mono hud-cta" href={cta} target="_blank" rel="noopener">{t.hud.whatsapp}</a>
   </nav>
 </header>
 
 <style>
   .marca-tld {
     color: var(--gold);
+  }
+
+  /* Duas línguas não pedem menu suspenso: um toque mostra a outra. */
+  .hud-idioma {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.4rem;
+    min-height: 44px;
+    color: var(--dim);
+    text-decoration: none;
+    border: 1px solid var(--line);
+    border-radius: 99px;
+    padding: 0 0.6rem;
+    transition: color 0.25s, border-color 0.25s;
+  }
+
+  .hud-idioma:hover {
+    color: var(--ink);
+    border-color: color-mix(in srgb, var(--gold) 55%, transparent);
   }
 </style>

@@ -1,34 +1,39 @@
 # marciliolemos.dev
 
 Site de página única em Astro estático. Fundo de espaço profundo com campo de
-estrelas em canvas, apresentando os produtos de TI e capturando contato por um
-formulário único de diagnóstico.
+estrelas em canvas, apresentando os produtos de TI. Todo botão leva direto ao
+WhatsApp com a mensagem do escopo já preenchida.
 
-A marca aparece só no app bar, como o próprio domínio — sem logo.
+A marca aparece só no app bar, como o próprio domínio, sem logo.
 
 ## Produtos
 
-1. **Sites e landing pages** — institucional, landing de conversão, vitrine
-2. **Aplicativos** — web, mobile e desktop
-3. **Dados e BI** — dashboards, integração de fontes, relatórios automáticos
-4. **TI em geral** — automações, APIs, integrações e sustentação
+1. **Sites e landing pages**: institucional, landing de conversão, vitrine
+2. **Aplicativos**: web, mobile e desktop
+3. **Dados e BI**: painéis, integração de fontes, relatórios automáticos
+4. **TI em geral**: automação, API, integração e sustentação
 
-Todos os CTAs abrem o **mesmo formulário**; o card só pré-responde a primeira
-pergunta (o escopo). Assim a captura sai sempre num **formato único**.
+## Contato
+
+Os CTAs são links `wa.me` resolvidos no build, sem JavaScript envolvido: se o
+script falhar, os botões continuam funcionando. Cada card manda uma mensagem
+diferente, então a conversa começa sabendo o que o visitante procura.
+
+Número, LinkedIn e Instagram ficam em **`src/dados/contato.ts`**.
 
 ## Stack
 
 - **Astro 7** (`output: 'static'`), `@astrojs/sitemap`
-- **i18n**: `pt` (padrão), `en`, `fr` — `en`/`fr` servem o conteúdo pt-BR via
+- **i18n**: `pt` (padrão), `en`, `fr`. `en`/`fr` servem o conteúdo pt-BR via
   fallback automático do Astro
 - **Campo de estrelas próprio** em canvas (`src/scripts/estrelas.ts`):
   distribuição de magnitude, cor por classe espectral, brilho somado com
   espículas de difração e paralaxe por profundidade. Sprites pré-renderizados,
   então o laço por frame só faz `drawImage`
 - **GSAP ScrollTrigger** (entradas por scroll) + **Lenis** (scroll suave, só no
-  desktop — no mobile o scroll nativo é mais previsível)
+  desktop, porque no mobile o scroll nativo é mais previsível)
 - Fontes via Fontsource (Space Grotesk Variable + IBM Plex Mono), empacotadas
-  no build — zero chamadas externas em runtime
+  no build, sem chamadas externas em runtime
 - **@vercel/analytics**
 - Zero dependências de UI; design system em `src/styles/global.css`
 
@@ -38,34 +43,28 @@ pergunta (o escopo). Assim a captura sai sempre num **formato único**.
 src/
 ├── pages/index.astro          # página única (head inline + script central)
 ├── components/
-│   ├── Hud.astro              # app bar: marca, Produtos, idioma, Diagnóstico
+│   ├── Hud.astro              # app bar: marca, Produtos, idioma, WhatsApp
 │   ├── Heroi.astro            # herói sobre o campo de estrelas
 │   ├── ProvaSocial.astro      # projeto em produção (MI6)
-│   ├── Produtos.astro         # as 4 frentes de entrega
-│   ├── Formulario.astro       # formulário único (5 perguntas + captura)
-│   └── Rodape.astro           # marca, contatos
+│   ├── Produtos.astro         # as quatro frentes de entrega
+│   └── Rodape.astro           # marca e contatos
 ├── dados/contato.ts           # ⚙️ WhatsApp, LinkedIn, Instagram
-├── scripts/
-│   ├── estrelas.ts            # campo de estrelas
-│   └── captura.ts             # formato único + envio + WhatsApp
+├── scripts/estrelas.ts        # campo de estrelas
 └── styles/global.css          # tokens e todo o CSS
 public/
 ├── favicon.svg, og.png        # ícone e preview de link
 └── logo-mi6.png               # prova social
 ```
 
-## Captura de leads
+## Dois cuidados no CSS que já causaram defeito
 
-O envio gera **um objeto plano** (uma chave por coluna) e vai para a URL de um
-fluxo do Power Automate que grava a linha numa planilha do Excel. As colunas e
-a ordem vivem em `COLUNAS`, em `src/scripts/captura.ts`.
-
-Configuração do fluxo, da planilha e da variável `PUBLIC_CAPTURA_URL`:
-**[`docs/CAPTURA.md`](docs/CAPTURA.md)** (inclui o aviso de licença: o gatilho
-HTTP é premium e não vem no Microsoft 365 Business Basic).
-
-Sem a variável configurada, o formulário abre o **WhatsApp** com o resumo —
-nenhum contato se perde enquanto o fluxo não existir.
+1. **Ordem da cascata.** As media queries do herói precisam vir **depois** das
+   regras base: mesma especificidade, então a última declaração vence. Quando
+   ficaram antes, todo o ajuste de tipografia mobile virou letra morta.
+2. **Nunca dar `transition: transform` em elemento animado pelo GSAP.** As duas
+   coisas escrevem a mesma propriedade e sobra `transform` inline preso no
+   elemento, o que empurrava o botão do herói contra a legenda de baixo. O hover
+   usa a propriedade autônoma `translate`, e as entradas usam `clearProps`.
 
 ## Desenvolvimento
 
@@ -87,5 +86,4 @@ Deploy na Vercel a cada push na `main`, domínio `marciliolemos.dev`.
 O build mantém todo JS e CSS em arquivos externos same-origin
 (`build.inlineStylesheets: 'never'` + `vite.build.assetsInlineLimit: 0`), então
 a CSP não depende de hashes por script. `style-src` permite estilos inline
-porque GSAP e Lenis animam via atributo `style`; `connect-src` libera os hosts
-do Power Automate para o envio da captura.
+porque GSAP e Lenis animam via atributo `style`.

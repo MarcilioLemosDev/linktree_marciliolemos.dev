@@ -1,25 +1,21 @@
 ---
-// Herói: texto sobre o campo de estrelas. Sem imagem de planeta e sem logo —
-// a marca vive só no app bar. Promessa de categoria + entrada no formulário.
+// Herói: promessa na tarefa do leitor e um único CTA, no padrão das páginas de
+// produto das refs. O CTA é link puro para o WhatsApp, resolvido no build.
+import { linkWhatsapp } from '../dados/contato';
+
+const cta = linkWhatsapp('Olá! Vim pelo site marciliolemos.dev e quero falar sobre um projeto.');
 ---
 
 <section id="topo" class="hero">
   <div class="hero-vinheta" aria-hidden="true"></div>
   <div class="hero-copy">
-    <p class="mono eyebrow">Sites · Aplicativos · Dados &amp; BI</p>
-    <h1>
-      Tecnologia <em>sob medida</em> para o seu negócio.
-    </h1>
+    <p class="mono eyebrow">Sites · Aplicativos · Dados e BI</p>
+    <h1>Software <em>sob medida</em> para o seu negócio.</h1>
     <p class="hero-tag">
-      Sites, aplicativos e plataformas de dados projetados, construídos e
-      mantidos — do primeiro protótipo à operação em produção.
+      Sites, aplicativos e painéis de dados construídos do zero, do primeiro
+      protótipo até a operação rodando.
     </p>
-    <button type="button" class="hero-cta" data-form>Iniciar diagnóstico</button>
-    <p class="hero-caption">
-      Interface que converte, dados confiáveis e decisões apoiadas em números.
-    </p>
-    <button type="button" class="hero-direto mono" data-whatsapp>
-      Falar direto no WhatsApp
-    </button>
+    <a class="hero-cta" href={cta} target="_blank" rel="noopener">Falar no WhatsApp</a>
+    <p class="hero-caption">Atendimento direto com quem desenvolve.</p>
   </div>
 </section>

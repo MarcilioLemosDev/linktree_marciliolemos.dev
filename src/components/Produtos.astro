@@ -1,35 +1,40 @@
 ---
-// Produtos. Todos os CTAs abrem o MESMO formulário ([data-form]) já com o
-// escopo escolhido (data-escopo), então a captura sai num formato único.
+// Produtos. Cada card leva direto ao WhatsApp com a mensagem do escopo já
+// preenchida, então a conversa começa sabendo o que o visitante procura.
+import { linkWhatsapp } from '../dados/contato';
+
 const produtos = [
   {
     eyebrow: '01 · Web',
     titulo: 'Sites e landing pages',
     texto:
-      'Institucional, landing de conversão ou vitrine de produtos. Carrega rápido, aparece na busca e converte no celular, onde está a maior parte do tráfego.',
-    escopo: 'Um site',
+      'Site institucional, landing de conversão ou vitrine de produtos: carrega rápido, aparece na busca e converte no celular, onde está a maior parte do tráfego.',
+    escopo: 'um site',
   },
   {
     eyebrow: '02 · Apps',
     titulo: 'Aplicativos',
     texto:
-      'Web, mobile e desktop. Do MVP que valida a ideia ao aplicativo publicado, com login, integrações e painel de administração.',
-    escopo: 'Um aplicativo',
+      'Aplicativo web, mobile ou desktop, do MVP que valida a ideia até a versão publicada, com login, integrações e painel de administração.',
+    escopo: 'um aplicativo',
   },
   {
     eyebrow: '03 · Dados',
     titulo: 'Dados e BI',
     texto:
-      'Dashboards, integração de fontes e relatórios automáticos. Os números saem da planilha manual e chegam prontos, atualizados e auditáveis.',
-    escopo: 'Dados e BI',
+      'Painéis, integração de fontes e relatórios automáticos: os números saem da planilha manual e chegam prontos, atualizados e auditáveis.',
+    escopo: 'dados e BI',
   },
 ];
+
+const link = (escopo: string) =>
+  linkWhatsapp(`Olá! Vim pelo site marciliolemos.dev e quero falar sobre ${escopo}.`);
 ---
 
 <section id="servicos" class="orbitas">
   <header class="orbitas-head">
     <p class="mono">Produtos</p>
-    <h2>Quatro frentes de entrega</h2>
+    <h2>O que dá para construir</h2>
     <p class="orbitas-lead">
       Cada frente resolve uma parte do caminho: a interface que o cliente usa, o
       sistema que sustenta a operação e o dado que orienta a decisão.
@@ -43,9 +48,9 @@ const produtos = [
           <p class="mono">{p.eyebrow}</p>
           <h3>{p.titulo}</h3>
           <p>{p.texto}</p>
-          <button type="button" class="tier-cta" data-form data-escopo={p.escopo}>
-            Solicitar proposta
-          </button>
+          <a class="tier-cta" href={link(p.escopo)} target="_blank" rel="noopener">
+            Falar no WhatsApp
+          </a>
         </article>
       ))
     }
@@ -55,13 +60,13 @@ const produtos = [
         <p class="mono">04 · Sob demanda</p>
         <h3>TI em geral</h3>
         <p>
-          Automações, APIs, integração entre sistemas e sustentação. Quando a
+          Automação, API, integração entre sistemas e sustentação. Quando a
           operação depende de tecnologia, ela precisa continuar de pé.
         </p>
       </div>
-      <button type="button" class="tier-cta" data-form data-escopo="TI em geral">
-        Solicitar proposta
-      </button>
+      <a class="tier-cta" href={link('TI em geral')} target="_blank" rel="noopener">
+        Falar no WhatsApp
+      </a>
     </article>
   </div>
 </section>

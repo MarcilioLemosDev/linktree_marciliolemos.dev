@@ -10,14 +10,13 @@ import Heroi from '../components/Heroi.astro';
 import ProvaSocial from '../components/ProvaSocial.astro';
 import Produtos from '../components/Produtos.astro';
 import Rodape from '../components/Rodape.astro';
-import Formulario from '../components/Formulario.astro';
 
 const site = Astro.site ?? new URL('http://localhost:4321');
 const canonical = new URL('/', site).href;
 const ogImg = new URL('/og.png', site).href;
-const titulo = 'marciliolemos.dev · Sites, aplicativos e soluções de dados e BI';
+const titulo = 'marciliolemos.dev · Software sob medida: sites, aplicativos, dados e BI';
 const descricao =
-  'Desenvolvimento de software sob medida: sites, aplicativos web, mobile e desktop, plataformas de dados e BI, e produtos de TI — do primeiro protótipo à operação em produção.';
+  'Sites, aplicativos web, mobile e desktop, painéis de dados e BI, e automações de TI. Construídos do primeiro protótipo até a operação em produção.';
 ---
 
 <!doctype html>
@@ -55,7 +54,6 @@ const descricao =
       <Produtos />
     </main>
     <Rodape />
-    <Formulario />
     <Analytics />
 
     <script>
@@ -88,12 +86,15 @@ const descricao =
 
       /* ── Entradas por scroll (sem pin: o herói não prende a rolagem) ─── */
       if (motionOk) {
+        // clearProps remove o style inline ao terminar: sem resíduo de
+        // transform, o espaçamento volta a ser só o do CSS.
         gsap.from('.hero-copy > *', {
           y: 22,
           opacity: 0,
           duration: 0.7,
           stagger: 0.08,
           ease: 'power2.out',
+          clearProps: 'all',
         });
 
         gsap
@@ -103,7 +104,7 @@ const descricao =
           .fromTo(
             '.prova > *',
             { y: 24, opacity: 0 },
-            { y: 0, opacity: 1, stagger: 0.12, ease: 'power2.out' }
+            { y: 0, opacity: 1, stagger: 0.12, ease: 'power2.out', clearProps: 'all' }
           );
 
         gsap
@@ -113,12 +114,12 @@ const descricao =
           .fromTo(
             '.orbitas-head > *',
             { y: 22, opacity: 0 },
-            { y: 0, opacity: 1, stagger: 0.1, ease: 'power2.out' }
+            { y: 0, opacity: 1, stagger: 0.1, ease: 'power2.out', clearProps: 'all' }
           )
           .fromTo(
             '.tier',
             { y: 28, opacity: 0 },
-            { y: 0, opacity: 1, stagger: 0.09, ease: 'power2.out' },
+            { y: 0, opacity: 1, stagger: 0.09, ease: 'power2.out', clearProps: 'all' },
             0.1
           );
 

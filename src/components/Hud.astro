@@ -1,4 +1,7 @@
 ---
+import { linkWhatsapp } from '../dados/contato';
+
+const cta = linkWhatsapp('Olá! Vim pelo site marciliolemos.dev.');
 const idiomas = [
   { code: 'pt', href: '/', label: 'PT-BR' },
   { code: 'en', href: '/en/', label: 'EN' },
@@ -39,7 +42,7 @@ const atual = idiomas.find((i) => i.code === (Astro.currentLocale ?? 'pt')) ?? i
         }
       </ul>
     </div>
-    <button type="button" class="mono hud-cta" data-form>Diagnóstico</button>
+    <a class="mono hud-cta" href={cta} target="_blank" rel="noopener">WhatsApp</a>
   </nav>
 </header>
 

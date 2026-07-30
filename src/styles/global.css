@@ -33,7 +33,7 @@ html,
 body {
   background: var(--bg);
   color: var(--ink);
-  /* `clip` corta o overflow horizontal sem virar contexto de rolagem —
+  /* `clip` corta o overflow horizontal sem virar contexto de rolagem,
      o que impede o dedo de "puxar" a página para os lados no mobile
      quando a entrada orbital move os planetas por vw. */
   overflow-x: clip;
@@ -106,7 +106,7 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.9rem 1.4rem;
+  padding: 0.35rem 1.4rem;
   color: var(--dim);
   transition: background 0.3s, border-color 0.3s, backdrop-filter 0.3s;
   border-bottom: 1px solid transparent;
@@ -126,6 +126,7 @@ main {
 .hud-brand {
   display: inline-flex;
   align-items: center;
+  min-height: 44px;
   color: var(--ink);
   letter-spacing: 0.1em;
   transition: opacity 0.25s;
@@ -143,6 +144,9 @@ main {
 }
 
 .hud-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   color: var(--dim);
   transition: color 0.25s;
 }
@@ -156,7 +160,11 @@ main {
 }
 
 .hud-cta {
-  padding: 0.5rem 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  text-decoration: none;
+  padding: 0 1.1rem;
   border-radius: 99px;
   background: var(--gold);
   color: #04121a;
@@ -241,7 +249,7 @@ main {
 
 @media (max-width: 760px) {
   .hud-top {
-    padding: 0.55rem 0.9rem;
+    padding: 0.25rem 0.9rem;
   }
 
   .hud-depth {
@@ -381,33 +389,7 @@ main {
     );
 }
 
-@media (max-width: 700px) {
-  .hero-copy h1 {
-    font-size: clamp(1.6rem, 6.4vw, 2.3rem);
-    line-height: 1.22;
-    max-width: 22ch;
-  }
 
-  .hero-tag {
-    font-size: 0.98rem;
-    max-width: 26rem;
-  }
-
-  .hero-cta {
-    padding: 0.9rem 1.6rem;
-    font-size: 0.6rem;
-    letter-spacing: 0.16em;
-  }
-
-  .hero-kicker {
-    font-size: 0.92rem;
-  }
-
-  .hero-caption {
-    font-size: 0.82rem;
-    max-width: 24rem;
-  }
-}
 
 .hero-copy {
   position: relative;
@@ -469,8 +451,16 @@ main {
   margin-right: auto;
 }
 
+/* É um <a>, não um <button>. Precisa ser caixa de BLOCO (flex + width
+   fit-content + margem automática): como inline-flex, o botão fica dentro de
+   uma linha de texto, transborda por baixo dela e engole a margem da legenda
+   seguinte, que foi o defeito de texto colado no botão. */
 .hero-cta {
-  margin-top: 1.8rem;
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem auto 0;
   padding: 1rem 2.4rem;
   border-radius: 0.65rem;
   background: var(--gold);
@@ -480,16 +470,20 @@ main {
   letter-spacing: 0.2em;
   text-transform: uppercase;
   font-weight: 500;
-  transition: filter 0.25s, transform 0.25s;
+  text-decoration: none;
+  /* Sem transition de transform: o GSAP anima transform na entrada e as duas
+     coisas disputando a mesma propriedade deixavam resíduo inline, que era o
+     defeito do texto colado no botão. O hover usa `translate`, autônoma. */
+  transition: filter 0.25s, translate 0.25s;
 }
 
 .hero-cta:hover {
   filter: brightness(1.09);
-  transform: translateY(-2px);
+  translate: 0 -2px;
 }
 
 .hero-caption {
-  margin-top: 1.1rem;
+  margin-top: 1.35rem;
   color: var(--dim);
   font-size: 0.86rem;
   max-width: 30rem;
@@ -507,6 +501,32 @@ main {
   font-size: 0.58rem;
   animation: pulse 2.6s ease-in-out infinite;
   white-space: nowrap;
+}
+
+/* Ajustes de tipografia e toque no celular. Precisam vir DEPOIS das regras
+   base: mesma especificidade, então a última declaração é a que vale. */
+@media (max-width: 700px) {
+  .hero-copy h1 {
+    font-size: clamp(1.6rem, 6.4vw, 2.3rem);
+    line-height: 1.22;
+    max-width: 22ch;
+  }
+
+  .hero-tag {
+    font-size: 0.98rem;
+    max-width: 26rem;
+  }
+
+  .hero-cta {
+    padding: 0.95rem 1.7rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+  }
+
+  .hero-caption {
+    font-size: 0.82rem;
+    max-width: 24rem;
+  }
 }
 
 @keyframes pulse {
@@ -726,7 +746,7 @@ main {
   border: 1px solid var(--line);
   border-radius: 1rem;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 60%);
-  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+  transition: translate 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
 @media (max-width: 560px) {
@@ -745,7 +765,7 @@ main {
 }
 
 .tier:hover {
-  transform: translateY(-5px);
+  translate: 0 -5px;
   border-color: rgba(60, 201, 233, 0.4);
   box-shadow: 0 18px 60px -30px rgba(60, 201, 233, 0.35);
 }
@@ -768,8 +788,12 @@ main {
 }
 
 .tier-cta {
-  margin-top: 1rem;
-  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  margin-top: 1.2rem;
+  padding: 0.9rem 1rem;
   border: 1px solid var(--line);
   border-radius: 0.6rem;
   font-family: var(--mono);

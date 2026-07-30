@@ -1,5 +1,5 @@
 /**
- * Campo de estrelas — espaço profundo.
+ * Campo de estrelas para o fundo de espaço profundo.
  *
  * Realismo vem de quatro coisas: distribuição de magnitude (muitas fracas,
  * pouquíssimas brilhantes), cor por classe espectral (azuladas a
@@ -24,12 +24,12 @@ interface Estrela {
 
 /** Cores aproximando classes espectrais reais, com peso de ocorrência. */
 const CORES: Array<[string, number]> = [
-  ['#a9c2ff', 0.05], // O/B — azul
-  ['#d7e2ff', 0.14], // A — branco-azulado
-  ['#ffffff', 0.3], // F — branco
-  ['#fff6e6', 0.24], // G — branco-amarelado
-  ['#ffdfb2', 0.18], // K — laranja
-  ['#ffbe96', 0.09], // M — avermelhada
+  ['#a9c2ff', 0.05], // O/B, azul
+  ['#d7e2ff', 0.14], // A, branco-azulado
+  ['#ffffff', 0.3], // F, branco
+  ['#fff6e6', 0.24], // G, branco-amarelado
+  ['#ffdfb2', 0.18], // K, laranja
+  ['#ffbe96', 0.09], // M, avermelhada
 ];
 
 /** Raios de núcleo por faixa de magnitude. */

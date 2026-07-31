@@ -62,7 +62,7 @@ const pt: Textos = {
     legenda: 'Do primeiro protótipo até o sistema publicado.',
   },
   prova: {
-    eyebrow: 'Em produção',
+    eyebrow: 'Conheça um de nossos projetos',
     frase:
       'Site institucional, simulador de consórcio e captação de contato pelo WhatsApp.',
     dica: 'Visitar mi6consorcio.com.br',
@@ -144,7 +144,7 @@ const en: Textos = {
     legenda: 'From the first prototype to a published system.',
   },
   prova: {
-    eyebrow: 'In production',
+    eyebrow: 'One of our projects',
     frase: 'Corporate site, consortium simulator and contact capture through WhatsApp.',
     dica: 'Visit mi6consorcio.com.br',
   },
